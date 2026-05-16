@@ -32,6 +32,7 @@ public class KeyHandler implements KeyListener {
     public boolean attackJustPressed;
     public boolean specialAttackJustPressed;
     public boolean jumpJustPressed;
+    public boolean enterJustPressed;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -76,6 +77,9 @@ public class KeyHandler implements KeyListener {
             case KeyEvent.VK_ESCAPE:
                 pausePressed = !pausePressed;
                 break;
+            case KeyEvent.VK_ENTER:
+                enterJustPressed = true;
+                break;
         }
     }
 
@@ -116,5 +120,6 @@ public class KeyHandler implements KeyListener {
         attackJustPressed = false;
         specialAttackJustPressed = false;
         jumpJustPressed = false;
+        enterJustPressed = false;
     }
 }

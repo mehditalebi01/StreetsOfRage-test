@@ -1,8 +1,6 @@
 package streetsofrage.main;
 
 import javax.swing.JFrame;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
 /**
  * Main entry point for Streets of Rage Java Port.
@@ -28,18 +26,6 @@ public class Game {
 
         // Initialize game
         gamePanel.setupGame();
-
-        // Add ENTER key listener for title screen
-        window.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    if (gamePanel.getGameState() == GamePanel.GameState.TITLE_SCREEN) {
-                        gamePanel.startGame();
-                    }
-                }
-            }
-        });
 
         // Start the game loop
         gamePanel.startGameThread();

@@ -15,9 +15,11 @@ import java.util.List;
 
 /**
  * The core game panel and game loop.
- * Replaces Unity's entire engine: Update(), LateUpdate(), rendering pipeline, etc.
+ * Replaces Unity's entire engine: Update(), LateUpdate(), rendering pipeline,
+ * etc.
  *
- * Implements Runnable for the game thread. Runs at 60 FPS using a delta-time loop.
+ * Implements Runnable for the game thread. Runs at 60 FPS using a delta-time
+ * loop.
  */
 public class GamePanel extends JPanel implements Runnable {
 
@@ -31,6 +33,7 @@ public class GamePanel extends JPanel implements Runnable {
         PLAYING,
         PAUSED
     }
+
     private GameState gameState = GameState.TITLE_SCREEN;
 
     // ======================== FPS ========================
@@ -41,7 +44,8 @@ public class GamePanel extends JPanel implements Runnable {
     private final AudioManager audioManager = new AudioManager();
     private Thread gameThread;
 
-    // ======================== Camera (replaces CameraFollow.cs) ========================
+    // ======================== Camera (replaces CameraFollow.cs)
+    // ========================
     public double cameraX = 0;
     public double cameraY = 0;
     private final double cameraSmoothFactor = 0.08;
@@ -65,16 +69,15 @@ public class GamePanel extends JPanel implements Runnable {
      */
     public void setupGame() {
         // Create level
-        level = new Level(this, "res/art/first_level.png", "res/sound/bareknuckle.wav");
+        level = new Level(this, "res/art/first_level.png", "res/sound/level_1.mp3");
 
         // Create player
         player = new Player(this, keyH, audioManager);
         player.setLevelBounds(
-            level.getLeftBound(),
-            level.getRightBound(),
-            level.getTopBound(),
-            level.getBottomBound()
-        );
+                level.getLeftBound(),
+                level.getRightBound(),
+                level.getTopBound(),
+                level.getBottomBound());
 
         // Create enemies
         enemies = new ArrayList<>();
@@ -86,7 +89,7 @@ public class GamePanel extends JPanel implements Runnable {
         hud = new HUD(this);
 
         // Play background music
-        audioManager.playBackgroundMusic("res/sound/bareknuckle.wav");
+        audioManager.playBackgroundMusic("res/sound/level_1.wav");
     }
 
     /**
@@ -133,9 +136,10 @@ public class GamePanel extends JPanel implements Runnable {
     public void update() {
         switch (gameState) {
             case TITLE_SCREEN:
-                // Wait for ENTER key
-                // We need to check raw key state since we don't have edge detection for Enter
-                // Just check if any key makes it past
+                // Wait for ENTER key to start
+                if (keyH.enterJustPressed) {
+                    gameState = GameState.PLAYING;
+                }
                 break;
             case PLAYING:
                 if (keyH.pausePressed) {
@@ -192,7 +196,8 @@ public class GamePanel extends JPanel implements Runnable {
         cameraY += (targetCameraY - cameraY) * cameraSmoothFactor;
 
         // Clamp camera to level bounds
-        if (cameraX < 0) cameraX = 0;
+        if (cameraX < 0)
+            cameraX = 0;
         if (cameraX > level.getLevelWidth() - screenWidth) {
             cameraX = level.getLevelWidth() - screenWidth;
         }
@@ -224,7 +229,8 @@ public class GamePanel extends JPanel implements Runnable {
 
         switch (gameState) {
             case TITLE_SCREEN:
-                if (level != null) level.draw(g2);
+                if (level != null)
+                    level.draw(g2);
                 hud.drawTitleScreen(g2);
                 break;
             case PLAYING:

@@ -12,8 +12,11 @@ import java.io.IOException;
  * Represents a game level with a scrolling background.
  * Replaces Unity's Level.cs and LevelController.cs.
  *
- * The background image is drawn wider than the screen, and the camera scrolls
- * across it following the player.
+ * The new stage images ("Streets of Rage - Stages - Round X.png") contain
+ * metadata/info at the top. We extract only the actual game background strip.
+ * 
+ * Round 1 image: 3984x641, background strip at approximately y=90 to y=325 (235px tall)
+ * Round 2 image: 3984x657, foreground strip at approximately y=95 to y=310 (215px tall)
  */
 public class Level {
 
@@ -23,8 +26,8 @@ public class Level {
     // Level boundaries (in world coordinates)
     private double leftBound;
     private double rightBound;
-    private double topBound;    // Min Y (depth near the top of playable area)
-    private double bottomBound; // Max Y (depth near the bottom)
+    private double topBound;
+    private double bottomBound;
 
     // Level dimensions
     private int levelWidth;
@@ -32,6 +35,11 @@ public class Level {
 
     // Music
     private final String backgroundMusicPath;
+
+    // Background color to make transparent (light blue/cyan from stage images)
+    private static final int STAGE_BG_R = 0;
+    private static final int STAGE_BG_G = 0;
+    private static final int STAGE_BG_B = 170;
 
     public Level(GamePanel gp, String backgroundPath, String musicPath) {
         this.gp = gp;
@@ -41,19 +49,35 @@ public class Level {
 
     private void loadBackground(String path) {
         try {
-            backgroundImage = ImageIO.read(new File(path));
-            // Scale the level width to be 3x the background image width for scrolling
-            levelWidth = backgroundImage.getWidth() * 3;
+            BufferedImage fullImage = ImageIO.read(new File(path));
+
+            // Extract just the background strip from the stage sheet
+            // Round 1: the city background is at approximately y=90, height~235
+            // We scale it to fill the screen height
+            int stripY = 90;
+            int stripHeight = 235;
+            int stripWidth = fullImage.getWidth();
+
+            if (stripY + stripHeight > fullImage.getHeight()) {
+                stripHeight = fullImage.getHeight() - stripY;
+            }
+
+            backgroundImage = fullImage.getSubimage(0, stripY, stripWidth, stripHeight);
+
+            // Level width: use the full background width scaled up
+            levelWidth = stripWidth * 2; // 2x scale gives us ~8000px wide level
             levelHeight = gp.screenHeight;
 
             // Set bounds
             leftBound = 0;
-            rightBound = levelWidth - 150;
-            topBound = (int)(gp.screenHeight * 0.45); // Top 45% is not walkable
-            bottomBound = gp.screenHeight - 120;       // Bottom margin
+            rightBound = levelWidth - 200;
+            topBound = (int)(gp.screenHeight * 0.45);
+            bottomBound = gp.screenHeight - 100;
+
         } catch (IOException e) {
             System.err.println("Could not load level background: " + path);
             e.printStackTrace();
+            // Fallback
             levelWidth = gp.screenWidth * 3;
             levelHeight = gp.screenHeight;
             leftBound = 0;
@@ -64,28 +88,27 @@ public class Level {
     }
 
     /**
-     * Draw the background, parallax-scrolled based on camera position.
+     * Draw the background, scrolled based on camera position.
      */
     public void draw(Graphics2D g2) {
         if (backgroundImage != null) {
-            // Tile/scroll the background across the level width
-            int bgWidth = backgroundImage.getWidth() * 3;
-            int bgHeight = gp.screenHeight;
+            int bgDrawWidth = backgroundImage.getWidth() * 2; // Scale 2x
+            int bgDrawHeight = gp.screenHeight;
 
-            // Calculate how much of the background to show based on camera
+            // Draw scrolling background
             int drawX = -(int) gp.cameraX;
 
-            // Draw the background repeated to fill the level
-            for (int i = -1; i < (levelWidth / bgWidth) + 2; i++) {
+            // Tile the background to fill the level
+            for (int i = -1; i <= (levelWidth / bgDrawWidth) + 2; i++) {
                 g2.drawImage(backgroundImage,
-                    drawX + (i * bgWidth), 0,
-                    bgWidth, bgHeight, null);
+                    drawX + (i * bgDrawWidth), 0,
+                    bgDrawWidth, bgDrawHeight, null);
             }
         } else {
             // Fallback: dark gradient
             GradientPaint gradient = new GradientPaint(
-                0, 0, new Color(30, 30, 60),
-                0, gp.screenHeight, new Color(60, 30, 30)
+                0, 0, new Color(10, 10, 40),
+                0, gp.screenHeight, new Color(40, 10, 20)
             );
             g2.setPaint(gradient);
             g2.fillRect(0, 0, gp.screenWidth, gp.screenHeight);
@@ -94,34 +117,10 @@ public class Level {
 
     // ======================== Getters ========================
 
-    public double getLeftBound() {
-        return leftBound;
-    }
-
-    public double getRightBound() {
-        return rightBound;
-    }
-
-    public double getTopBound() {
-        return topBound;
-    }
-
-    public double getBottomBound() {
-        return bottomBound;
-    }
-
-    public int getLevelWidth() {
-        return levelWidth;
-    }
-
-    public String getBackgroundMusicPath() {
-        return backgroundMusicPath;
-    }
-
-    /**
-     * Check if a player X position is within bounds.
-     */
-    public boolean isPlayerInXBounds(double playerX, double playerWidth) {
-        return playerX >= leftBound && (playerX + playerWidth) <= rightBound;
-    }
+    public double getLeftBound() { return leftBound; }
+    public double getRightBound() { return rightBound; }
+    public double getTopBound() { return topBound; }
+    public double getBottomBound() { return bottomBound; }
+    public int getLevelWidth() { return levelWidth; }
+    public String getBackgroundMusicPath() { return backgroundMusicPath; }
 }

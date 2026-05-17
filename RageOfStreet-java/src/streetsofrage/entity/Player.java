@@ -29,7 +29,6 @@ public class Player extends Entity {
     private final AudioManager audioManager;
 
     // Animation system
-    private final SpriteLoader spriteLoader;
     private Animation idleAnim;
     private Animation walkAnim;
     private Animation jumpAnim;
@@ -66,29 +65,26 @@ public class Player extends Entity {
     private double levelTopBound = 200;     // min Y (depth)
     private double levelBottomBound = 500;  // max Y (depth)
 
-    public Player(GamePanel gp, KeyHandler keyH, AudioManager audioManager) {
+    public Player(GamePanel gp, KeyHandler keyH, AudioManager audioManager, SpriteLoader spriteLoader) {
         super(gp);
         this.keyH = keyH;
         this.audioManager = audioManager;
 
-        // Load sprites
-        spriteLoader = new SpriteLoader("res/art/Axel_BK3.png");
-
-        // Initialize animations (frame delay in ms)
-        idleAnim    = new Animation(spriteLoader.getIdleFrames(),   167, true);   // 6 fps
-        walkAnim    = new Animation(spriteLoader.getWalkFrames(),   167, true);   // 6 fps
-        jumpAnim    = new Animation(spriteLoader.getJumpFrames(),   167, false);  // 6 fps
-        fallAnim    = new Animation(spriteLoader.getFallFrames(),    83, true);   // 12 fps
-        attack1Anim = new Animation(spriteLoader.getAttack1Frames(), 167, false); // 6 fps
-        attack2Anim = new Animation(spriteLoader.getAttack2Frames(),  83, false); // 12 fps
+        // Initialize animations from the new sprite loader (frame delay in ms)
+        idleAnim    = new Animation(spriteLoader.getAxelIdleFrames(),   167, true);   // 6 fps
+        walkAnim    = new Animation(spriteLoader.getAxelWalkFrames(),   167, true);   // 6 fps
+        jumpAnim    = new Animation(spriteLoader.getAxelJumpFrames(),   167, false);  // 6 fps
+        fallAnim    = new Animation(spriteLoader.getAxelFallFrames(),    83, true);   // 12 fps
+        attack1Anim = new Animation(spriteLoader.getAxelAttack1Frames(), 100, false); // 10 fps
+        attack2Anim = new Animation(spriteLoader.getAxelAttack2Frames(), 100, false); // 10 fps
 
         currentAnimation = idleAnim;
 
         // Combat setup
         hitBox = new HitBox();
         attackController = new AttackController(hitBox, audioManager);
-        basicAttack = new Attack("Punch", "Attack1", 10, 60, 40, 0.5f, "res/sound/air_punch.wav");
-        specialAttack = new Attack("Special", "Attack2", 25, 80, 60, 0.7f, "res/sound/bareknuckle.wav");
+        basicAttack = new Attack("Punch", "Attack1", 10, 80, 60, 0.4f, "res/sound/air_punch.wav");
+        specialAttack = new Attack("Special", "Attack2", 25, 100, 70, 0.6f, "res/sound/bareknuckle.wav");
 
         // Player properties
         maxHealth = 100;
@@ -101,7 +97,7 @@ public class Player extends Entity {
         groundY = worldY;
 
         // Collision box (relative to draw pos)
-        solidArea = new Rectangle(10, 10, 30, 60);
+        solidArea = new Rectangle(15, 10, 40, 70);
     }
 
     /**
@@ -293,16 +289,6 @@ public class Player extends Entity {
             g2.drawImage(sprite,
                 (int) screenX, (int) screenY,
                 drawWidth, drawHeight, null);
-        }
-
-        // Draw hitbox (debug - red outline)
-        if (hitBox.isActive()) {
-            Rectangle hb = hitBox.getBounds();
-            g2.setColor(new Color(255, 0, 0, 100));
-            g2.drawRect(
-                (int)(hb.x - gp.cameraX), (int)(hb.y - gp.cameraY),
-                hb.width, hb.height
-            );
         }
     }
 

@@ -11,44 +11,49 @@ import java.awt.image.BufferedImage;
  * A basic enemy character for beat-em-up gameplay.
  * Enemies patrol back and forth and can be hit by the player.
  *
- * Uses the same sprite sheet as the player for simplicity
- * (tinted red to distinguish).
+ * Uses the enemy sprite sheet "Streets of Rage - Enemies & Bosses - Bosses.png".
+ *
+ * BUG FIX: Previously, enemies would "vanish" when hit because damage was applied
+ * every frame while the hitbox was active (60fps * 10dmg = 600dmg in 1 second,
+ * instantly killing a 50HP enemy). Now each attack can only hit once per swing
+ * using a hit cooldown timer.
  */
 public class Enemy extends Entity {
 
-    private final SpriteLoader spriteLoader;
     private Animation idleAnim;
     private Animation walkAnim;
+    private Animation hitAnim;
     private Animation currentAnim;
 
     private boolean facingRight = true;
-    private boolean moving = false;
 
     // AI patrol variables
     private double patrolLeftX;
     private double patrolRightX;
     private boolean patrollingRight = true;
 
-    // Hit flash
+    // Hit reaction
     private int hitFlashTimer = 0;
+    private int hitStunTimer = 0;         // frames the enemy is stunned after being hit
+    private boolean hitThisAttack = false; // prevents multi-hit from one swing
     private final int renderScale = 3;
 
-    public Enemy(GamePanel gp, double startX, double startY, double patrolRange) {
+    public Enemy(GamePanel gp, SpriteLoader spriteLoader, double startX, double startY, double patrolRange) {
         super(gp);
         this.worldX = startX;
         this.worldY = startY;
         this.speed = 1.5;
-        this.maxHealth = 50;
-        this.currentHealth = 50;
+        this.maxHealth = 60;
+        this.currentHealth = 60;
         this.patrolLeftX = startX - patrolRange / 2;
         this.patrolRightX = startX + patrolRange / 2;
 
-        solidArea = new Rectangle(10, 10, 30, 60);
+        solidArea = new Rectangle(10, 10, 40, 70);
 
-        // Load sprites (reuse same spritesheet, tinted)
-        spriteLoader = new SpriteLoader("res/art/Axel_BK3.png");
-        idleAnim = new Animation(spriteLoader.getIdleFrames(), 200, true);
-        walkAnim = new Animation(spriteLoader.getWalkFrames(), 200, true);
+        // Load enemy sprites
+        idleAnim = new Animation(spriteLoader.getEnemyIdleFrames(), 200, true);
+        walkAnim = new Animation(spriteLoader.getEnemyWalkFrames(), 200, true);
+        hitAnim  = new Animation(spriteLoader.getEnemyHitFrames(),  150, false);
         currentAnim = idleAnim;
     }
 
@@ -57,6 +62,15 @@ public class Enemy extends Entity {
         if (!alive) return;
 
         if (hitFlashTimer > 0) hitFlashTimer--;
+        if (hitStunTimer > 0) {
+            hitStunTimer--;
+            currentAnim = hitAnim;
+            currentAnim.update();
+            return; // Don't move while stunned
+        }
+
+        // Reset hit flag when stun ends (ready to be hit by next attack)
+        hitThisAttack = false;
 
         // Simple patrol AI
         if (patrollingRight) {
@@ -99,10 +113,11 @@ public class Enemy extends Entity {
             12
         );
 
-        // Set tint (red for enemies)
+        // Hit flash effect: alternate visibility
         Composite originalComposite = g2.getComposite();
-        if (hitFlashTimer > 0) {
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        if (hitFlashTimer > 0 && hitFlashTimer % 4 < 2) {
+            // Flash white by drawing with reduced alpha
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.4f));
         }
 
         // Draw sprite
@@ -119,23 +134,43 @@ public class Enemy extends Entity {
         g2.setComposite(originalComposite);
 
         // Draw health bar above enemy
-        int barWidth = 40;
-        int barHeight = 5;
+        int barWidth = 50;
+        int barHeight = 6;
         int barX = (int) screenX + drawWidth / 2 - barWidth / 2;
-        int barY = (int) screenY - 10;
+        int barY = (int) screenY - 14;
         double healthPercent = (double) currentHealth / maxHealth;
 
-        g2.setColor(Color.DARK_GRAY);
-        g2.fillRect(barX, barY, barWidth, barHeight);
-        g2.setColor(Color.RED);
+        // Background
+        g2.setColor(new Color(40, 0, 0));
+        g2.fillRect(barX - 1, barY - 1, barWidth + 2, barHeight + 2);
+        // Health fill
+        g2.setColor(healthPercent > 0.3 ? new Color(220, 50, 50) : new Color(255, 80, 30));
         g2.fillRect(barX, barY, (int)(barWidth * healthPercent), barHeight);
-        g2.setColor(Color.WHITE);
-        g2.drawRect(barX, barY, barWidth, barHeight);
+        // Border
+        g2.setColor(new Color(200, 200, 200));
+        g2.drawRect(barX - 1, barY - 1, barWidth + 2, barHeight + 2);
     }
 
     @Override
     public void takeDamage(int damage) {
         super.takeDamage(damage);
-        hitFlashTimer = 10;
+        hitFlashTimer = 20;  // Flash for 20 frames
+        hitStunTimer = 15;   // Stun for 15 frames (~0.25s)
+        hitAnim.reset();
+    }
+
+    /**
+     * Check if this enemy has already been hit by the current attack swing.
+     * This prevents a single attack from dealing damage every frame.
+     */
+    public boolean wasHitThisAttack() {
+        return hitThisAttack;
+    }
+
+    /**
+     * Mark this enemy as hit by the current attack swing.
+     */
+    public void markHitByAttack() {
+        hitThisAttack = true;
     }
 }

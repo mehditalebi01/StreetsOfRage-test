@@ -3,23 +3,21 @@ package streetsofrage.main;
 import streetsofrage.audio.AudioManager;
 import streetsofrage.entity.Enemy;
 import streetsofrage.entity.Player;
+import streetsofrage.graphics.SpriteLoader;
 import streetsofrage.inputs.KeyHandler;
 import streetsofrage.level.Level;
 import streetsofrage.ui.HUD;
 
 import javax.swing.JPanel;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The core game panel and game loop.
- * Replaces Unity's entire engine: Update(), LateUpdate(), rendering pipeline,
- * etc.
+ * Replaces Unity's entire engine: Update(), LateUpdate(), rendering pipeline, etc.
  *
- * Implements Runnable for the game thread. Runs at 60 FPS using a delta-time
- * loop.
+ * Implements Runnable for the game thread. Runs at 60 FPS using a delta-time loop.
  */
 public class GamePanel extends JPanel implements Runnable {
 
@@ -33,7 +31,6 @@ public class GamePanel extends JPanel implements Runnable {
         PLAYING,
         PAUSED
     }
-
     private GameState gameState = GameState.TITLE_SCREEN;
 
     // ======================== FPS ========================
@@ -44,8 +41,7 @@ public class GamePanel extends JPanel implements Runnable {
     private final AudioManager audioManager = new AudioManager();
     private Thread gameThread;
 
-    // ======================== Camera (replaces CameraFollow.cs)
-    // ========================
+    // ======================== Camera (replaces CameraFollow.cs) ========================
     public double cameraX = 0;
     public double cameraY = 0;
     private final double cameraSmoothFactor = 0.08;
@@ -68,28 +64,40 @@ public class GamePanel extends JPanel implements Runnable {
      * Initialize the game world. Called once before the game loop starts.
      */
     public void setupGame() {
-        // Create level
-        level = new Level(this, "res/art/first_level.png", "res/sound/level_1.mp3");
+        // Load shared sprite loader for characters
+        SpriteLoader spriteLoader = new SpriteLoader(
+            "res/art/Streets of Rage - Playable Characters - Adam, Axel and Blaze.png"
+        );
+        spriteLoader.loadEnemySheet(
+            "res/art/Streets of Rage - Enemies & Bosses - Bosses.png"
+        );
 
-        // Create player
-        player = new Player(this, keyH, audioManager);
+        // Create level (using the new Round 1 background)
+        level = new Level(this,
+            "res/art/Streets of Rage - Stages - Round 1.png",
+            "res/sound/bareknuckle.wav"
+        );
+
+        // Create player (pass shared SpriteLoader)
+        player = new Player(this, keyH, audioManager, spriteLoader);
         player.setLevelBounds(
-                level.getLeftBound(),
-                level.getRightBound(),
-                level.getTopBound(),
-                level.getBottomBound());
+            level.getLeftBound(),
+            level.getRightBound(),
+            level.getTopBound(),
+            level.getBottomBound()
+        );
 
-        // Create enemies
+        // Create enemies (pass shared SpriteLoader)
         enemies = new ArrayList<>();
-        enemies.add(new Enemy(this, 500, 380, 200));
-        enemies.add(new Enemy(this, 900, 350, 150));
-        enemies.add(new Enemy(this, 1300, 400, 250));
+        enemies.add(new Enemy(this, spriteLoader, 500, 380, 200));
+        enemies.add(new Enemy(this, spriteLoader, 900, 350, 150));
+        enemies.add(new Enemy(this, spriteLoader, 1300, 400, 250));
 
         // Create HUD
         hud = new HUD(this);
 
         // Play background music
-        audioManager.playBackgroundMusic("res/sound/level_1.wav");
+        audioManager.playBackgroundMusic("res/sound/bareknuckle.wav");
     }
 
     /**
@@ -157,10 +165,15 @@ public class GamePanel extends JPanel implements Runnable {
                 }
 
                 // Check player attack vs enemies
+                // FIX: Only hit each enemy ONCE per attack swing using wasHitThisAttack()
                 if (player.getHitBox().isActive()) {
                     for (Enemy enemy : enemies) {
-                        if (enemy.isAlive() && player.getHitBox().checkCollision(enemy.getWorldBounds())) {
-                            enemy.takeDamage(player.getHitBox().getCurrentAttack().getDamage());
+                        if (enemy.isAlive()
+                                && !enemy.wasHitThisAttack()
+                                && player.getHitBox().checkCollision(enemy.getWorldBounds())) {
+                            int dmg = player.getHitBox().getCurrentAttack().getDamage();
+                            enemy.takeDamage(dmg);
+                            enemy.markHitByAttack();
                             if (!enemy.isAlive()) {
                                 hud.addScore(100);
                             }
@@ -196,8 +209,7 @@ public class GamePanel extends JPanel implements Runnable {
         cameraY += (targetCameraY - cameraY) * cameraSmoothFactor;
 
         // Clamp camera to level bounds
-        if (cameraX < 0)
-            cameraX = 0;
+        if (cameraX < 0) cameraX = 0;
         if (cameraX > level.getLevelWidth() - screenWidth) {
             cameraX = level.getLevelWidth() - screenWidth;
         }
@@ -229,8 +241,7 @@ public class GamePanel extends JPanel implements Runnable {
 
         switch (gameState) {
             case TITLE_SCREEN:
-                if (level != null)
-                    level.draw(g2);
+                level.draw(g2);
                 hud.drawTitleScreen(g2);
                 break;
             case PLAYING:

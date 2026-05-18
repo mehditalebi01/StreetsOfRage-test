@@ -7,17 +7,27 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Loads all sprite frames for characters and enemies from the new ripped sprite sheets.
- * 
+ * Loads all sprite frames for characters and enemies from the ripped sprite sheets.
+ *
  * Character sheet: "Streets of Rage - Playable Characters - Adam, Axel and Blaze.png" (648x1464)
- *   - Adam section:  rows ~12 to ~370  (top)
- *   - Axel section:  rows ~370 to ~775 (middle)
- *   - Blaze section: rows ~775 to ~1400 (bottom)
+ * Enemy sheet:     "Streets of Rage - Enemies & Bosses - Bosses.png" (760x1360)
  *
- * Enemy sheet: "Streets of Rage - Enemies & Bosses - Bosses.png" (760x1360)
- *   - First boss (blue): rows ~12 to ~300 (top)
+ * All coordinates come from the SpriteDetector auto-scan.
+ * Background color RGB(186,254,202) is made transparent.
  *
- * Background color on both sheets: RGB(186, 254, 202) - needs to be made transparent.
+ * AXEL sprites (auto-detected indices from character sheet):
+ *   Stance/Idle row 1: indices 33,34,35 (y~336-340, standing fight poses)
+ *   Walk:              indices 45,46,47  (y~489, walking cycle)
+ *   Punch row:         indices 54,55,56,57,58 (y~560s, punch/attack)
+ *   Kick/special row:  indices 61,62,63,64,65,66,67 (y~638-660)
+ *   Jump area:         indices 36,37 (y~336, crouching/airborne near stance)
+ *   Knocked down:      indices 71,72 (y~730s)
+ *
+ * ENEMY sprites (first boss at top of enemy sheet):
+ *   Row 1 idle/walk:   indices 0,1,2,3,4 (y~17, standing)
+ *   Row 1 attacks:     indices 5,6        (y~24-31, punching)
+ *   Row 2 hit/recoil:  indices 7,8,9      (y~118-119, recoiling)
+ *   Row 2 attacks:     indices 10,11       (y~120-123, kicking)
  */
 public class SpriteLoader {
 
@@ -37,9 +47,6 @@ public class SpriteLoader {
         }
     }
 
-    /**
-     * Load the enemy sprite sheet separately.
-     */
     public void loadEnemySheet(String enemySheetPath) {
         try {
             enemySheet = ImageIO.read(new File(enemySheetPath));
@@ -56,7 +63,6 @@ public class SpriteLoader {
         if (source == null) {
             return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         }
-        // Clamp to bounds
         if (x < 0) x = 0;
         if (y < 0) y = 0;
         if (x + width > source.getWidth()) width = source.getWidth() - x;
@@ -66,7 +72,6 @@ public class SpriteLoader {
         }
 
         BufferedImage sub = source.getSubimage(x, y, width, height);
-        // Convert to ARGB and make background transparent
         BufferedImage transparent = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         for (int px = 0; px < width; px++) {
             for (int py = 0; py < height; py++) {
@@ -74,9 +79,8 @@ public class SpriteLoader {
                 int r = (rgb >> 16) & 0xFF;
                 int g = (rgb >> 8) & 0xFF;
                 int b = rgb & 0xFF;
-                // Check if pixel matches background color (with small tolerance)
-                if (Math.abs(r - BG_R) < 10 && Math.abs(g - BG_G) < 10 && Math.abs(b - BG_B) < 10) {
-                    transparent.setRGB(px, py, 0x00000000); // fully transparent
+                if (Math.abs(r - BG_R) < 12 && Math.abs(g - BG_G) < 12 && Math.abs(b - BG_B) < 12) {
+                    transparent.setRGB(px, py, 0x00000000);
                 } else {
                     transparent.setRGB(px, py, rgb);
                 }
@@ -86,108 +90,101 @@ public class SpriteLoader {
     }
 
     // =========================================================================
-    // AXEL animations (from character sheet, middle section ~y370 to y775)
-    // Coordinates measured from the sprite sheet image.
-    //
-    // Axel section starts at approximately y=378.
-    // Row 1 (y~388): Idle/Walk stance frames
-    // Row 2 (y~475): Walk cycle continued + punch start
-    // Row 3 (y~555): Punch/attack frames
-    // Row 4 (y~635): Jump, kick, special frames
-    // Row 5 (y~700): More combos, knockdown
+    // AXEL animations — coordinates from SpriteDetector auto-scan
     // =========================================================================
 
-    /** Axel Idle: 3 frames from row 1 of Axel section (standing poses) */
+    /** Axel Idle: 3 fight stance frames (indices 33,34,35) */
     public BufferedImage[] getAxelIdleFrames() {
         return new BufferedImage[] {
-            extractSprite(characterSheet, 9, 388, 42, 80),   // stance 1
-            extractSprite(characterSheet, 59, 388, 42, 80),  // stance 2
-            extractSprite(characterSheet, 109, 388, 42, 80), // stance 3
+            extractSprite(characterSheet, 9,   337, 39, 63),  // #33
+            extractSprite(characterSheet, 58,  336, 42, 64),  // #34
+            extractSprite(characterSheet, 114, 338, 42, 62),  // #35
         };
     }
 
-    /** Axel Walk: 4 frames from row 1-2 of Axel section */
+    /** Axel Walk: 4 walking frames (indices 45,46,47 + 33) */
     public BufferedImage[] getAxelWalkFrames() {
         return new BufferedImage[] {
-            extractSprite(characterSheet, 9, 388, 42, 80),   // step 1
-            extractSprite(characterSheet, 59, 388, 42, 80),  // step 2
-            extractSprite(characterSheet, 109, 388, 42, 80), // step 3
-            extractSprite(characterSheet, 159, 388, 42, 80), // step 4
+            extractSprite(characterSheet, 8,   489, 40, 63),  // #45
+            extractSprite(characterSheet, 56,  489, 41, 63),  // #46
+            extractSprite(characterSheet, 112, 489, 41, 63),  // #47
+            extractSprite(characterSheet, 9,   337, 39, 63),  // #33 (return to stance)
         };
     }
 
-    /** Axel Jump: 2 frames from row 1 (crouching then airborne) */
+    /** Axel Jump: 2 frames (crouch + airborne, indices 36,37) */
     public BufferedImage[] getAxelJumpFrames() {
         return new BufferedImage[] {
-            extractSprite(characterSheet, 311, 388, 48, 80),  // jump crouch
-            extractSprite(characterSheet, 370, 388, 48, 80),  // airborne
+            extractSprite(characterSheet, 297, 336, 31, 64),  // #36 (crouch)
+            extractSprite(characterSheet, 337, 337, 36, 63),  // #37 (airborne)
         };
     }
 
-    /** Axel Fall: 1 frame (falling pose) */
+    /** Axel Fall: 1 frame */
     public BufferedImage[] getAxelFallFrames() {
         return new BufferedImage[] {
-            extractSprite(characterSheet, 370, 388, 48, 80),
+            extractSprite(characterSheet, 337, 337, 36, 63),  // #37
         };
     }
 
-    /** Axel Punch (Attack1): 3 frames from row 2 (wind up, extend, retract) */
+    /** Axel Punch (Attack1): 3 frames (indices 54,56,58 - wind up, extend, follow through) */
     public BufferedImage[] getAxelAttack1Frames() {
         return new BufferedImage[] {
-            extractSprite(characterSheet, 9, 478, 48, 80),   // wind up
-            extractSprite(characterSheet, 65, 478, 65, 80),  // punch extended
-            extractSprite(characterSheet, 140, 478, 55, 80), // follow through
+            extractSprite(characterSheet, 8,   562, 58, 62),  // #54 (wind up)
+            extractSprite(characterSheet, 128, 567, 72, 57),  // #56 (punch extended)
+            extractSprite(characterSheet, 256, 563, 66, 61),  // #58 (follow through)
         };
     }
 
-    /** Axel Special (Attack2): 4 frames from row 3 (big swing attack) */
+    /** Axel Special (Attack2): 4 frames (indices 61,63,64,66 - big attack combo) */
     public BufferedImage[] getAxelAttack2Frames() {
         return new BufferedImage[] {
-            extractSprite(characterSheet, 9, 558, 50, 80),   // prep
-            extractSprite(characterSheet, 68, 558, 60, 80),  // swing start
-            extractSprite(characterSheet, 138, 558, 68, 80), // full extension
-            extractSprite(characterSheet, 216, 558, 55, 80), // recovery
+            extractSprite(characterSheet, 49,  638, 36, 66),  // #61 (prep)
+            extractSprite(characterSheet, 96,  640, 47, 64),  // #63 (swing)
+            extractSprite(characterSheet, 156, 641, 43, 63),  // #64 (full extension)
+            extractSprite(characterSheet, 248, 640, 51, 64),  // #66 (recovery)
         };
     }
 
     // =========================================================================
-    // ENEMY animations (from enemy sheet - first boss, blue/red guy at top)
-    // The first boss row starts at roughly y=10, each sprite ~80-90px tall
+    // ENEMY animations — first boss from enemy sheet (top rows)
     // =========================================================================
 
-    /** Enemy Idle: 3 frames from row 1 of enemy sheet */
+    /** Enemy Idle: 3 stance frames (indices 0,1,2) */
     public BufferedImage[] getEnemyIdleFrames() {
         return new BufferedImage[] {
-            extractSprite(enemySheet, 10, 12, 55, 85),
-            extractSprite(enemySheet, 75, 12, 55, 85),
-            extractSprite(enemySheet, 140, 12, 55, 85),
+            extractSprite(enemySheet, 8,   17, 84, 87),   // #0
+            extractSprite(enemySheet, 104, 16, 79, 88),   // #1
+            extractSprite(enemySheet, 192, 17, 79, 87),   // #2
         };
     }
 
-    /** Enemy Walk: 4 frames from row 1-2 of enemy sheet */
+    /** Enemy Walk: 5 walking frames (indices 0,1,2,3,4) */
     public BufferedImage[] getEnemyWalkFrames() {
         return new BufferedImage[] {
-            extractSprite(enemySheet, 10, 12, 55, 85),
-            extractSprite(enemySheet, 75, 12, 55, 85),
-            extractSprite(enemySheet, 140, 12, 55, 85),
-            extractSprite(enemySheet, 210, 12, 55, 85),
+            extractSprite(enemySheet, 8,   17, 84, 87),   // #0
+            extractSprite(enemySheet, 104, 16, 79, 88),   // #1
+            extractSprite(enemySheet, 192, 17, 79, 87),   // #2
+            extractSprite(enemySheet, 280, 20, 79, 84),   // #4
+            extractSprite(enemySheet, 368, 14, 79, 90),   // #3
         };
     }
 
-    /** Enemy Hit: 2 frames showing the enemy recoiling when punched */
+    /** Enemy Hit reaction: 3 frames (indices 7,8,9 - recoiling) */
     public BufferedImage[] getEnemyHitFrames() {
         return new BufferedImage[] {
-            extractSprite(enemySheet, 350, 12, 55, 85),
-            extractSprite(enemySheet, 420, 12, 55, 85),
+            extractSprite(enemySheet, 200, 119, 64, 73),  // #7 (hit stagger)
+            extractSprite(enemySheet, 272, 118, 52, 74),  // #8 (recoil)
+            extractSprite(enemySheet, 336, 119, 46, 73),  // #9 (recovery)
         };
     }
 
-    /** Enemy Attack: 3 frames */
+    /** Enemy Attack: 3 frames (indices 5,6 + 10) */
     public BufferedImage[] getEnemyAttackFrames() {
         return new BufferedImage[] {
-            extractSprite(enemySheet, 280, 12, 55, 85),
-            extractSprite(enemySheet, 350, 12, 55, 85),
-            extractSprite(enemySheet, 490, 12, 60, 85),
+            extractSprite(enemySheet, 456, 31, 66, 73),   // #5 (wind up)
+            extractSprite(enemySheet, 536, 24, 69, 80),   // #6 (punch)
+            extractSprite(enemySheet, 8,   123, 79, 69),  // #10 (follow through)
         };
     }
 }

@@ -52,10 +52,10 @@ public class Level {
             BufferedImage fullImage = ImageIO.read(new File(path));
 
             // Extract just the background strip from the stage sheet
-            // Round 1: the city background is at approximately y=90, height~235
+            // Round 1: city background runs from Y=97 to Y=400 (pixel-scanned)
             // We scale it to fill the screen height
-            int stripY = 90;
-            int stripHeight = 235;
+            int stripY = 97;
+            int stripHeight = 303;
             int stripWidth = fullImage.getWidth();
 
             if (stripY + stripHeight > fullImage.getHeight()) {

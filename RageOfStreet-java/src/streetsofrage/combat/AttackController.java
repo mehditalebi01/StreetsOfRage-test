@@ -7,9 +7,11 @@ import java.util.Queue;
 
 /**
  * Manages attack queuing and execution.
- * Replaces Unity's AttackController.cs.
- *
- * Supports a queue of up to 3 consecutive attacks (combo system).
+ * 
+ * OOP Concepts Used:
+ * 1. Composition: Holds references to HitBox and AudioManager, managing their interactions.
+ * 2. Encapsulation: Controls the attack queue logic internally. External classes just call
+ *    addAttack() and updateAttack(), ignorant of how timers and the queue are managed.
  */
 public class AttackController {
 

@@ -3,6 +3,7 @@ package streetsofrage.entity;
 import streetsofrage.audio.AudioManager;
 import streetsofrage.combat.Attack;
 import streetsofrage.combat.AttackController;
+import streetsofrage.combat.Attacker;
 import streetsofrage.combat.HitBox;
 import streetsofrage.graphics.Animation;
 import streetsofrage.graphics.SpriteLoader;
@@ -11,19 +12,19 @@ import streetsofrage.main.GamePanel;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * The player character (Axel).
- * Ports the logic from Unity's PlayerController.cs, BodyController.cs,
- * CharacterAnimationController.cs, and GroundShadow.cs.
- *
- * Implements a 2.5D beat-em-up movement system:
- *   - Left/Right moves along X axis
- *   - Up/Down moves along the "depth" Y axis (simulating depth in 2.5D)
- *   - Jump applies upward velocity with gravity, creating an arc
- *   - Shadow stays on the ground when jumping
+ * The player character.
+ * 
+ * OOP Concepts Used:
+ * 1. Inheritance: Extends Entity to inherit basic properties (position, health, etc.).
+ * 2. Polymorphism: Implements the Attacker interface and overrides update() and draw() methods.
+ * 3. Encapsulation: Hides all input, physics, and state machine details from the rest of the game.
+ * 4. Composition: Uses AttackController and HitBox objects as components to handle combat.
  */
-public class Player extends Entity {
+public class Player extends Entity implements Attacker {
 
     private final KeyHandler keyH;
     private final AudioManager audioManager;
@@ -42,6 +43,11 @@ public class Player extends Entity {
         IDLE, WALK, JUMP, FALL, ATTACK1, ATTACK2, DEATH
     }
     private State currentState = State.IDLE;
+
+    public enum PlayerType {
+        AXEL, BLAZE
+    }
+    private PlayerType type;
 
     // Physics
     private double groundY;         // The Y position of the ground (shadow)
@@ -65,18 +71,31 @@ public class Player extends Entity {
     private double levelTopBound = 200;     // min Y (depth)
     private double levelBottomBound = 500;  // max Y (depth)
 
-    public Player(GamePanel gp, KeyHandler keyH, AudioManager audioManager, SpriteLoader spriteLoader) {
+    // Track which enemies have hit the player during their current attack swing
+    private final Set<Enemy> hitByEnemies = new HashSet<>();
+
+    public Player(GamePanel gp, KeyHandler keyH, AudioManager audioManager, SpriteLoader spriteLoader, PlayerType type) {
         super(gp);
         this.keyH = keyH;
         this.audioManager = audioManager;
+        this.type = type;
 
         // Initialize animations from the new sprite loader (frame delay in ms)
-        idleAnim    = new Animation(spriteLoader.getAxelIdleFrames(),   167, true);   // 6 fps
-        walkAnim    = new Animation(spriteLoader.getAxelWalkFrames(),   167, true);   // 6 fps
-        jumpAnim    = new Animation(spriteLoader.getAxelJumpFrames(),   167, false);  // 6 fps
-        fallAnim    = new Animation(spriteLoader.getAxelFallFrames(),    83, true);   // 12 fps
-        attack1Anim = new Animation(spriteLoader.getAxelAttack1Frames(), 100, false); // 10 fps
-        attack2Anim = new Animation(spriteLoader.getAxelAttack2Frames(), 100, false); // 10 fps
+        if (type == PlayerType.AXEL) {
+            idleAnim    = new Animation(spriteLoader.getAxelIdleFrames(),   167, true);   // 6 fps
+            walkAnim    = new Animation(spriteLoader.getAxelWalkFrames(),   167, true);   // 6 fps
+            jumpAnim    = new Animation(spriteLoader.getAxelJumpFrames(),   167, false);  // 6 fps
+            fallAnim    = new Animation(spriteLoader.getAxelFallFrames(),    83, true);   // 12 fps
+            attack1Anim = new Animation(spriteLoader.getAxelAttack1Frames(), 100, false); // 10 fps
+            attack2Anim = new Animation(spriteLoader.getAxelAttack2Frames(), 100, false); // 10 fps
+        } else {
+            idleAnim    = new Animation(spriteLoader.getBlazeIdleFrames(),   167, true);
+            walkAnim    = new Animation(spriteLoader.getBlazeWalkFrames(),   167, true);
+            jumpAnim    = new Animation(spriteLoader.getBlazeJumpFrames(),   167, false);
+            fallAnim    = new Animation(spriteLoader.getBlazeFallFrames(),    83, true);
+            attack1Anim = new Animation(spriteLoader.getBlazeAttack1Frames(), 100, false);
+            attack2Anim = new Animation(spriteLoader.getBlazeAttack2Frames(), 100, false);
+        }
 
         currentAnimation = idleAnim;
 
@@ -310,7 +329,20 @@ public class Player extends Entity {
         return currentState;
     }
 
+    @Override
     public HitBox getHitBox() {
         return hitBox;
+    }
+
+    public boolean wasHitThisAttack(Enemy enemy) {
+        return hitByEnemies.contains(enemy);
+    }
+
+    public void markHitByAttack(Enemy enemy) {
+        hitByEnemies.add(enemy);
+    }
+
+    public void clearHitByAttack(Enemy enemy) {
+        hitByEnemies.remove(enemy);
     }
 }

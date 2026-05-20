@@ -3,11 +3,11 @@ package streetsofrage.graphics;
 import java.awt.image.BufferedImage;
 
 /**
- * Handles frame-by-frame animation for sprite-based characters.
- * Replaces Unity's Animator and AnimationClip system.
+ * Handles playing a sequence of sprites over time.
  * 
- * Each Animation holds an array of BufferedImage frames and cycles through them
- * at a specified delay (in milliseconds).
+ * OOP Concepts Used:
+ * 1. Encapsulation: Tracks current frame index and timing internally. The user of this
+ *    class simply calls update() and getCurrentFrame() without worrying about time diffs.
  */
 public class Animation {
 

@@ -1,0 +1,839 @@
+{
+  "metadata": {
+    "coordinateSystem": "top-left origin, pixels, rectangles are x/y/width/height",
+    "transparentBackgroundRgb": [
+      186,
+      254,
+      202
+    ],
+    "createdFor": "Java SpriteLoader / Streets of Rage sprite sheets",
+    "notes": [
+      "Axel jump/fall frames were corrected from the previous pass.",
+      "The selected two playable characters are Axel and Blaze.",
+      "The selected four enemy groups are the first four major usable groups from the enemy/boss sheet."
+    ]
+  },
+  "sources": {
+    "playableCharacters": "Sega Genesis - Streets of Rage - Playable Characters - Adam, Axel and Blaze.png",
+    "enemiesAndBosses": "Sega Genesis - Streets of Rage - Enemies & Bosses - Bosses.png",
+    "round1Stage": "Sega Genesis - Streets of Rage - Stages - Round 1.png",
+    "round2Stage": "Sega Genesis - Streets of Rage - Stages - Round 2.png"
+  },
+  "characters": {
+    "axel": {
+      "source": "playableCharacters",
+      "animations": {
+        "idle": [
+          {
+            "x": 8,
+            "y": 489,
+            "width": 40,
+            "height": 63,
+            "name": "idle_1"
+          },
+          {
+            "x": 56,
+            "y": 489,
+            "width": 41,
+            "height": 63,
+            "name": "idle_2"
+          },
+          {
+            "x": 112,
+            "y": 489,
+            "width": 41,
+            "height": 63,
+            "name": "idle_3"
+          }
+        ],
+        "walk": [
+          {
+            "x": 8,
+            "y": 801,
+            "width": 39,
+            "height": 63,
+            "name": "walk_1"
+          },
+          {
+            "x": 56,
+            "y": 801,
+            "width": 40,
+            "height": 63,
+            "name": "walk_2"
+          },
+          {
+            "x": 104,
+            "y": 802,
+            "width": 40,
+            "height": 62,
+            "name": "walk_3"
+          },
+          {
+            "x": 56,
+            "y": 801,
+            "width": 40,
+            "height": 63,
+            "name": "walk_4"
+          }
+        ],
+        "jump": [
+          {
+            "x": 8,
+            "y": 650,
+            "width": 32,
+            "height": 54,
+            "name": "takeoff"
+          },
+          {
+            "x": 49,
+            "y": 638,
+            "width": 36,
+            "height": 66,
+            "name": "rising"
+          },
+          {
+            "x": 96,
+            "y": 640,
+            "width": 47,
+            "height": 64,
+            "name": "airborne_kick"
+          },
+          {
+            "x": 72,
+            "y": 736,
+            "width": 48,
+            "height": 56,
+            "name": "airborne_fall"
+          }
+        ],
+        "fall": [
+          {
+            "x": 60,
+            "y": 881,
+            "width": 44,
+            "height": 55,
+            "name": "hit_start"
+          },
+          {
+            "x": 112,
+            "y": 897,
+            "width": 69,
+            "height": 38,
+            "name": "falling_back"
+          },
+          {
+            "x": 192,
+            "y": 921,
+            "width": 71,
+            "height": 15,
+            "name": "down_flat"
+          },
+          {
+            "x": 272,
+            "y": 907,
+            "width": 56,
+            "height": 29,
+            "name": "down_recover"
+          }
+        ],
+        "attack1": [
+          {
+            "x": 80,
+            "y": 561,
+            "width": 34,
+            "height": 63,
+            "name": "ready"
+          },
+          {
+            "x": 8,
+            "y": 562,
+            "width": 58,
+            "height": 62,
+            "name": "punch_extend"
+          },
+          {
+            "x": 128,
+            "y": 567,
+            "width": 72,
+            "height": 57,
+            "name": "punch_follow_through"
+          }
+        ],
+        "attack2": [
+          {
+            "x": 49,
+            "y": 638,
+            "width": 36,
+            "height": 66,
+            "name": "special_1"
+          },
+          {
+            "x": 96,
+            "y": 640,
+            "width": 47,
+            "height": 64,
+            "name": "special_2"
+          },
+          {
+            "x": 156,
+            "y": 641,
+            "width": 43,
+            "height": 63,
+            "name": "special_3"
+          },
+          {
+            "x": 248,
+            "y": 640,
+            "width": 51,
+            "height": 64,
+            "name": "special_4"
+          }
+        ]
+      }
+    },
+    "blaze": {
+      "source": "playableCharacters",
+      "animations": {
+        "idle": [
+          {
+            "x": 8,
+            "y": 957,
+            "width": 44,
+            "height": 59,
+            "name": "idle_1"
+          },
+          {
+            "x": 64,
+            "y": 957,
+            "width": 44,
+            "height": 59,
+            "name": "idle_2"
+          },
+          {
+            "x": 122,
+            "y": 957,
+            "width": 50,
+            "height": 59,
+            "name": "idle_3"
+          }
+        ],
+        "walk": [
+          {
+            "x": 12,
+            "y": 1261,
+            "width": 49,
+            "height": 59,
+            "name": "walk_1"
+          },
+          {
+            "x": 72,
+            "y": 1258,
+            "width": 40,
+            "height": 62,
+            "name": "walk_2"
+          },
+          {
+            "x": 120,
+            "y": 1261,
+            "width": 40,
+            "height": 59,
+            "name": "walk_3"
+          },
+          {
+            "x": 168,
+            "y": 1265,
+            "width": 58,
+            "height": 55,
+            "name": "walk_4"
+          }
+        ],
+        "jump": [
+          {
+            "x": 8,
+            "y": 1117,
+            "width": 40,
+            "height": 51,
+            "name": "takeoff"
+          },
+          {
+            "x": 56,
+            "y": 1104,
+            "width": 28,
+            "height": 64,
+            "name": "airborne_1"
+          },
+          {
+            "x": 120,
+            "y": 1176,
+            "width": 15,
+            "height": 72,
+            "name": "airborne_flip"
+          },
+          {
+            "x": 59,
+            "y": 1187,
+            "width": 51,
+            "height": 61,
+            "name": "landing"
+          }
+        ],
+        "fall": [
+          {
+            "x": 58,
+            "y": 1328,
+            "width": 38,
+            "height": 56,
+            "name": "hit_start"
+          },
+          {
+            "x": 104,
+            "y": 1352,
+            "width": 64,
+            "height": 32,
+            "name": "falling"
+          },
+          {
+            "x": 176,
+            "y": 1365,
+            "width": 63,
+            "height": 19,
+            "name": "down_flat"
+          },
+          {
+            "x": 248,
+            "y": 1359,
+            "width": 56,
+            "height": 25,
+            "name": "down_recover"
+          }
+        ],
+        "attack1": [
+          {
+            "x": 8,
+            "y": 1032,
+            "width": 68,
+            "height": 56,
+            "name": "punch_1"
+          },
+          {
+            "x": 88,
+            "y": 1035,
+            "width": 43,
+            "height": 53,
+            "name": "punch_2"
+          },
+          {
+            "x": 149,
+            "y": 1031,
+            "width": 35,
+            "height": 57,
+            "name": "punch_3"
+          },
+          {
+            "x": 192,
+            "y": 1031,
+            "width": 57,
+            "height": 57,
+            "name": "punch_4"
+          }
+        ],
+        "attack2": [
+          {
+            "x": 386,
+            "y": 1024,
+            "width": 50,
+            "height": 62,
+            "name": "kick_1"
+          },
+          {
+            "x": 448,
+            "y": 1040,
+            "width": 39,
+            "height": 48,
+            "name": "kick_2"
+          },
+          {
+            "x": 496,
+            "y": 1031,
+            "width": 38,
+            "height": 57,
+            "name": "kick_3"
+          },
+          {
+            "x": 544,
+            "y": 1029,
+            "width": 55,
+            "height": 59,
+            "name": "kick_4"
+          }
+        ]
+      }
+    }
+  },
+  "enemies": {
+    "boss_blue": {
+      "source": "enemiesAndBosses",
+      "animations": {
+        "idle": [
+          {
+            "x": 8,
+            "y": 17,
+            "width": 84,
+            "height": 87
+          },
+          {
+            "x": 104,
+            "y": 16,
+            "width": 79,
+            "height": 88
+          },
+          {
+            "x": 192,
+            "y": 17,
+            "width": 79,
+            "height": 87
+          }
+        ],
+        "walk": [
+          {
+            "x": 8,
+            "y": 17,
+            "width": 84,
+            "height": 87
+          },
+          {
+            "x": 104,
+            "y": 16,
+            "width": 79,
+            "height": 88
+          },
+          {
+            "x": 192,
+            "y": 17,
+            "width": 79,
+            "height": 87
+          },
+          {
+            "x": 280,
+            "y": 20,
+            "width": 79,
+            "height": 84
+          },
+          {
+            "x": 368,
+            "y": 14,
+            "width": 79,
+            "height": 90
+          }
+        ],
+        "attack": [
+          {
+            "x": 456,
+            "y": 31,
+            "width": 66,
+            "height": 73
+          },
+          {
+            "x": 536,
+            "y": 24,
+            "width": 69,
+            "height": 80
+          },
+          {
+            "x": 8,
+            "y": 123,
+            "width": 79,
+            "height": 69
+          },
+          {
+            "x": 97,
+            "y": 120,
+            "width": 95,
+            "height": 72
+          }
+        ],
+        "hit": [
+          {
+            "x": 200,
+            "y": 119,
+            "width": 64,
+            "height": 73
+          },
+          {
+            "x": 272,
+            "y": 118,
+            "width": 52,
+            "height": 74
+          },
+          {
+            "x": 336,
+            "y": 119,
+            "width": 46,
+            "height": 73
+          }
+        ]
+      }
+    },
+    "red_punk": {
+      "source": "enemiesAndBosses",
+      "animations": {
+        "idle": [
+          {
+            "x": 8,
+            "y": 297,
+            "width": 51,
+            "height": 79
+          },
+          {
+            "x": 72,
+            "y": 297,
+            "width": 48,
+            "height": 79
+          },
+          {
+            "x": 128,
+            "y": 297,
+            "width": 48,
+            "height": 79
+          }
+        ],
+        "attack": [
+          {
+            "x": 184,
+            "y": 306,
+            "width": 76,
+            "height": 70
+          },
+          {
+            "x": 272,
+            "y": 306,
+            "width": 76,
+            "height": 70
+          },
+          {
+            "x": 360,
+            "y": 298,
+            "width": 92,
+            "height": 78
+          },
+          {
+            "x": 464,
+            "y": 300,
+            "width": 90,
+            "height": 76
+          },
+          {
+            "x": 568,
+            "y": 300,
+            "width": 76,
+            "height": 76
+          },
+          {
+            "x": 656,
+            "y": 306,
+            "width": 84,
+            "height": 70
+          }
+        ],
+        "hit": [
+          {
+            "x": 8,
+            "y": 393,
+            "width": 60,
+            "height": 71
+          },
+          {
+            "x": 80,
+            "y": 397,
+            "width": 40,
+            "height": 67
+          },
+          {
+            "x": 128,
+            "y": 393,
+            "width": 60,
+            "height": 71
+          },
+          {
+            "x": 200,
+            "y": 400,
+            "width": 76,
+            "height": 64
+          },
+          {
+            "x": 288,
+            "y": 418,
+            "width": 75,
+            "height": 46
+          }
+        ]
+      }
+    },
+    "orange_wrestler": {
+      "source": "enemiesAndBosses",
+      "animations": {
+        "idleWalk": [
+          {
+            "x": 8,
+            "y": 478,
+            "width": 40,
+            "height": 82
+          },
+          {
+            "x": 56,
+            "y": 479,
+            "width": 39,
+            "height": 81
+          },
+          {
+            "x": 104,
+            "y": 478,
+            "width": 39,
+            "height": 82
+          },
+          {
+            "x": 152,
+            "y": 482,
+            "width": 63,
+            "height": 78
+          },
+          {
+            "x": 224,
+            "y": 483,
+            "width": 57,
+            "height": 77
+          },
+          {
+            "x": 288,
+            "y": 482,
+            "width": 63,
+            "height": 78
+          },
+          {
+            "x": 360,
+            "y": 482,
+            "width": 63,
+            "height": 78
+          },
+          {
+            "x": 432,
+            "y": 472,
+            "width": 62,
+            "height": 88
+          }
+        ],
+        "attack": [
+          {
+            "x": 8,
+            "y": 602,
+            "width": 60,
+            "height": 70
+          },
+          {
+            "x": 80,
+            "y": 603,
+            "width": 54,
+            "height": 69
+          },
+          {
+            "x": 144,
+            "y": 603,
+            "width": 67,
+            "height": 69
+          },
+          {
+            "x": 312,
+            "y": 606,
+            "width": 45,
+            "height": 66
+          },
+          {
+            "x": 464,
+            "y": 608,
+            "width": 60,
+            "height": 64
+          },
+          {
+            "x": 536,
+            "y": 599,
+            "width": 90,
+            "height": 73
+          },
+          {
+            "x": 640,
+            "y": 595,
+            "width": 48,
+            "height": 77
+          },
+          {
+            "x": 696,
+            "y": 572,
+            "width": 51,
+            "height": 100
+          }
+        ],
+        "fall": [
+          {
+            "x": 224,
+            "y": 634,
+            "width": 79,
+            "height": 38
+          }
+        ]
+      }
+    },
+    "fat_enemy": {
+      "source": "enemiesAndBosses",
+      "animations": {
+        "idleWalk": [
+          {
+            "x": 8,
+            "y": 680,
+            "width": 48,
+            "height": 72
+          },
+          {
+            "x": 64,
+            "y": 680,
+            "width": 46,
+            "height": 72
+          },
+          {
+            "x": 120,
+            "y": 680,
+            "width": 46,
+            "height": 72
+          },
+          {
+            "x": 176,
+            "y": 680,
+            "width": 48,
+            "height": 72
+          },
+          {
+            "x": 232,
+            "y": 680,
+            "width": 46,
+            "height": 72
+          },
+          {
+            "x": 288,
+            "y": 680,
+            "width": 46,
+            "height": 72
+          },
+          {
+            "x": 344,
+            "y": 680,
+            "width": 46,
+            "height": 72
+          },
+          {
+            "x": 400,
+            "y": 680,
+            "width": 46,
+            "height": 72
+          },
+          {
+            "x": 456,
+            "y": 680,
+            "width": 46,
+            "height": 72
+          },
+          {
+            "x": 512,
+            "y": 680,
+            "width": 46,
+            "height": 72
+          },
+          {
+            "x": 568,
+            "y": 680,
+            "width": 48,
+            "height": 72
+          }
+        ],
+        "hitFall": [
+          {
+            "x": 8,
+            "y": 772,
+            "width": 59,
+            "height": 60
+          },
+          {
+            "x": 80,
+            "y": 772,
+            "width": 45,
+            "height": 60
+          },
+          {
+            "x": 136,
+            "y": 765,
+            "width": 74,
+            "height": 67
+          },
+          {
+            "x": 224,
+            "y": 792,
+            "width": 87,
+            "height": 40
+          },
+          {
+            "x": 320,
+            "y": 788,
+            "width": 55,
+            "height": 44
+          },
+          {
+            "x": 384,
+            "y": 760,
+            "width": 48,
+            "height": 72
+          },
+          {
+            "x": 440,
+            "y": 760,
+            "width": 48,
+            "height": 72
+          }
+        ]
+      }
+    }
+  },
+  "stages": {
+    "round1": {
+      "source": "round1Stage",
+      "layers": {
+        "background": {
+          "x": 16,
+          "y": 174,
+          "width": 3952,
+          "height": 216
+        },
+        "foregroundLoop": {
+          "x": 24,
+          "y": 409,
+          "width": 1024,
+          "height": 215
+        }
+      }
+    },
+    "round2": {
+      "source": "round2Stage",
+      "layers": {
+        "foregroundStreet": {
+          "x": 16,
+          "y": 174,
+          "width": 3952,
+          "height": 216
+        },
+        "staticBackgroundPanel": {
+          "x": 24,
+          "y": 416,
+          "width": 512,
+          "height": 217
+        }
+      }
+    }
+  }
+}

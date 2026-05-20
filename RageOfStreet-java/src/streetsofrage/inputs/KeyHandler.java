@@ -4,8 +4,13 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 /**
- * Handles keyboard input for the game.
- * Replaces Unity's InputSystem (PlayerControls.cs).
+ * Handles keyboard input.
+ * 
+ * OOP Concepts Used:
+ * 1. Polymorphism: Implements Java's KeyListener interface, allowing it to be registered
+ *    as an event listener on the GamePanel (JPanel).
+ * 2. Encapsulation: Exposes simple boolean flags (e.g., jumpJustPressed) for the game loop
+ *    to read, hiding the raw key event handling details.
  *
  * Controls:
  *   Move:          W/A/S/D or Arrow Keys

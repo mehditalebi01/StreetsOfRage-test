@@ -6,8 +6,11 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Loads a sprite sheet image from disk and provides sub-image extraction.
- * This replaces Unity's Sprite/Texture2D asset system.
+ * Represents a loaded sprite sheet image.
+ * 
+ * OOP Concepts Used:
+ * 1. Encapsulation: The BufferedImage is kept private, and sub-images are provided
+ *    via the getSprite() method, preventing external classes from modifying the sheet.
  */
 public class SpriteSheet {
 

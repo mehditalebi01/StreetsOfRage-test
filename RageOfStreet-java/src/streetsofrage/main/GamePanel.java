@@ -15,7 +15,12 @@ import java.util.List;
 
 /**
  * The core game panel and game loop.
- * Replaces Unity's entire engine: Update(), LateUpdate(), rendering pipeline, etc.
+ * 
+ * OOP Concepts Used:
+ * 1. Composition: GamePanel is composed of many objects (Player, Level, HUD, List<Enemy>),
+ *    managing their lifecycles and interactions rather than inheriting from them.
+ * 2. Encapsulation: State variables like camera position and game state are managed internally,
+ *    and the game loop is hidden from the main entry point (Game.java).
  *
  * Implements Runnable for the game thread. Runs at 60 FPS using a delta-time loop.
  */
@@ -75,11 +80,12 @@ public class GamePanel extends JPanel implements Runnable {
         // Create level (using the new Round 1 background)
         level = new Level(this,
             "res/art/Streets of Rage - Stages - Round 1.png",
-            "res/sound/bareknuckle.wav"
+            "res/sound/level_1.wav"
         );
 
         // Create player (pass shared SpriteLoader)
-        player = new Player(this, keyH, audioManager, spriteLoader);
+        player = new Player(this, keyH, audioManager, spriteLoader, Player.PlayerType.BLAZE);
+        // Note: You can change the above to Player.PlayerType.BLAZE to play as Blaze!
         player.setLevelBounds(
             level.getLeftBound(),
             level.getRightBound(),
@@ -89,15 +95,16 @@ public class GamePanel extends JPanel implements Runnable {
 
         // Create enemies (pass shared SpriteLoader)
         enemies = new ArrayList<>();
-        enemies.add(new Enemy(this, spriteLoader, 500, 380, 200));
-        enemies.add(new Enemy(this, spriteLoader, 900, 350, 150));
-        enemies.add(new Enemy(this, spriteLoader, 1300, 400, 250));
+        enemies.add(new Enemy(this, spriteLoader, Enemy.EnemyType.BOSS_BLUE, 500, 380, 200));
+        enemies.add(new Enemy(this, spriteLoader, Enemy.EnemyType.RED_PUNK, 900, 350, 150));
+        enemies.add(new Enemy(this, spriteLoader, Enemy.EnemyType.ORANGE_WRESTLER, 1300, 400, 250));
+        enemies.add(new Enemy(this, spriteLoader, Enemy.EnemyType.FAT_ENEMY, 1700, 380, 200));
 
         // Create HUD
         hud = new HUD(this);
 
         // Play background music
-        audioManager.playBackgroundMusic("res/sound/bareknuckle.wav");
+        audioManager.playBackgroundMusic("res/sound/level_1.wav");
     }
 
     /**
@@ -165,7 +172,6 @@ public class GamePanel extends JPanel implements Runnable {
                 }
 
                 // Check player attack vs enemies
-                // FIX: Only hit each enemy ONCE per attack swing using wasHitThisAttack()
                 if (player.getHitBox().isActive()) {
                     for (Enemy enemy : enemies) {
                         if (enemy.isAlive()
@@ -178,6 +184,21 @@ public class GamePanel extends JPanel implements Runnable {
                                 hud.addScore(100);
                             }
                         }
+                    }
+                }
+
+                // Check enemy attacks vs player
+                for (Enemy enemy : enemies) {
+                    if (enemy.isAlive() && enemy.getHitBox().isActive()) {
+                        // For simplicity, enemies deal damage to player and we use a small invincible frame logic in player 
+                        // if needed, but for now we just deal damage once per attack.
+                        if (!player.wasHitThisAttack(enemy) && enemy.getHitBox().checkCollision(player.getWorldBounds())) {
+                            int dmg = enemy.getHitBox().getCurrentAttack().getDamage();
+                            player.takeDamage(dmg);
+                            player.markHitByAttack(enemy);
+                        }
+                    } else {
+                        player.clearHitByAttack(enemy);
                     }
                 }
 

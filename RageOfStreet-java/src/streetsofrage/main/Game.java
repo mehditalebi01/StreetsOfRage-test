@@ -3,11 +3,11 @@ package streetsofrage.main;
 import javax.swing.JFrame;
 
 /**
- * Main entry point for Streets of Rage Java Port.
- * Creates the JFrame window and starts the game.
- *
- * This replaces Unity's entire editor + build pipeline.
- * Just compile and run: java streetsofrage.main.Game
+ * The main entry point for the application.
+ * 
+ * OOP Concepts Used:
+ * 1. Encapsulation: The setup of the JFrame is contained completely within this class.
+ *    It initializes the UI window and hands control over to the GamePanel.
  */
 public class Game {
 

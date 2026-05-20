@@ -7,8 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utility tool to auto-detect sprite bounding boxes from a sprite sheet.
- * Scans for connected non-background regions and outputs their coordinates.
+ * A utility class to detect sprites from an image.
+ * 
+ * OOP Concepts Used:
+ * 1. Utility Pattern / Encapsulation: Contains static helper methods to scan images,
+ *    keeping this low-level image processing algorithm isolated from the rest of the game.
  *
  * Usage: java streetsofrage.tools.SpriteDetector <image_path> [minWidth] [minHeight]
  */

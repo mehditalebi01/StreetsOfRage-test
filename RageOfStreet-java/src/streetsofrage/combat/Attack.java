@@ -2,9 +2,12 @@ package streetsofrage.combat;
 
 /**
  * Represents a single attack type with its properties.
- * Replaces Unity's ScriptableObject Attack.cs.
- *
- * This is a pure data class following OOP encapsulation.
+ * 
+ * OOP Concepts Used:
+ * 1. Encapsulation: All fields are private and final, ensuring immutability. 
+ *    Data can only be accessed via public getters, preventing unintended side-effects.
+ * 2. Object creation: Groups related data (damage, range, cooldown) into a single object
+ *    rather than passing individual variables around.
  */
 public class Attack {
 

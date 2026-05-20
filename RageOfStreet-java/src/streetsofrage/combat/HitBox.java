@@ -4,7 +4,12 @@ import java.awt.Rectangle;
 
 /**
  * Represents the hitbox used for collision detection during attacks.
- * Replaces Unity's HitBox.cs and BoxCollider2D trigger logic.
+ * 
+ * OOP Concepts Used:
+ * 1. Encapsulation: State like 'active' and 'bounds' is strictly controlled.
+ *    External classes cannot arbitrarily modify bounds directly, they must call methods
+ *    like setAttack() and updatePosition().
+ * 2. Cohesion: Has a single responsibility—tracking collision boxes for attacks.
  */
 public class HitBox {
 

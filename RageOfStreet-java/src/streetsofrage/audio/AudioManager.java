@@ -5,8 +5,11 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Handles audio playback using javax.sound.sampled.
- * Replaces Unity's AudioSource component.
+ * Handles playing sound effects and background music.
+ * 
+ * OOP Concepts Used:
+ * 1. Encapsulation: Wraps Java's low-level Clip and AudioInputStream APIs,
+ *    exposing simple playBackgroundMusic() and playSoundEffect() methods to the game.
  *
  * Supports .wav files natively. MP3 is not supported by default javax.sound.sampled;
  * for the background music (level_1.mp3), we use a .wav alternative if available,

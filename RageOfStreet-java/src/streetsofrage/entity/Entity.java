@@ -1,16 +1,23 @@
 package streetsofrage.entity;
 
+import streetsofrage.combat.Damageable;
+
 import streetsofrage.main.GamePanel;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 /**
  * Abstract base class for all game entities (player, enemies, NPCs).
- * Replaces Unity's MonoBehaviour/GameObject pattern with standard OOP inheritance.
- *
- * Provides shared properties: position, speed, direction, collision bounds.
+ * 
+ * OOP Concepts Used:
+ * 1. Abstraction: This class is abstract and defines the core template (update/draw) 
+ *    that subclasses must implement, hiding the complex implementation details of each specific entity.
+ * 2. Inheritance: Serves as the superclass for Player and Enemy, allowing code reuse
+ *    for basic properties like health, position, and collision.
+ * 3. Encapsulation: Fields are protected, restricting direct access from outside the package/hierarchy,
+ *    and modifying state (like health) is controlled through methods like takeDamage().
  */
-public abstract class Entity {
+public abstract class Entity implements Damageable {
 
     protected GamePanel gp;
 
@@ -23,9 +30,9 @@ public abstract class Entity {
     public boolean facingRight = true;
 
     // Collision bounds (relative to worldX, worldY)
-    public Rectangle solidArea;
-    public int solidAreaDefaultX;
-    public int solidAreaDefaultY;
+    protected Rectangle solidArea;
+    protected int solidAreaDefaultX;
+    protected int solidAreaDefaultY;
 
     // Health system
     protected int maxHealth;
@@ -62,8 +69,9 @@ public abstract class Entity {
     }
 
     /**
-     * Take damage.
+     * Take damage (implements Damageable).
      */
+    @Override
     public void takeDamage(int damage) {
         currentHealth -= damage;
         if (currentHealth <= 0) {
@@ -72,14 +80,17 @@ public abstract class Entity {
         }
     }
 
+    @Override
     public boolean isAlive() {
         return alive;
     }
 
+    @Override
     public int getCurrentHealth() {
         return currentHealth;
     }
 
+    @Override
     public int getMaxHealth() {
         return maxHealth;
     }

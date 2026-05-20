@@ -9,8 +9,12 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Represents a game level with a scrolling background.
- * Replaces Unity's Level.cs and LevelController.cs.
+ * Represents the scrolling background level.
+ * 
+ * OOP Concepts Used:
+ * 1. Encapsulation: The background image and bounds logic are kept private. The GamePanel
+ *    queries the bounds via getters to restrict player movement, ensuring the Level class
+ *    maintains control over its data.
  *
  * The new stage images ("Streets of Rage - Stages - Round X.png") contain
  * metadata/info at the top. We extract only the actual game background strip.

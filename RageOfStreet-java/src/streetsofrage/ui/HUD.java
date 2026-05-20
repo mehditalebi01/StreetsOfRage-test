@@ -6,8 +6,12 @@ import streetsofrage.main.GamePanel;
 import java.awt.*;
 
 /**
- * Heads-Up Display that shows player health, score, and controls info.
- * Replaces any Unity UI Canvas elements.
+ * Handles all Heads-Up Display (UI) elements.
+ * 
+ * OOP Concepts Used:
+ * 1. Composition: Keeps a reference to GamePanel to retrieve necessary data without 
+ *    strong coupling.
+ * 2. Encapsulation: State like 'score' is hidden and updated via addScore() method.
  */
 public class HUD {
 

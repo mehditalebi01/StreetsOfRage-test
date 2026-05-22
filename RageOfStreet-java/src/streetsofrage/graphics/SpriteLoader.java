@@ -1,6 +1,7 @@
 package streetsofrage.graphics;
 
 import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +10,8 @@ import java.io.IOException;
  * Loads and extracts sprite frames from sprite sheets.
  * 
  * OOP Concepts Used:
- * 1. Encapsulation: Hides the complex logic of cutting sub-images and making backgrounds transparent.
+ * 1. Encapsulation: Hides the complex logic of cutting sub-images, making backgrounds transparent,
+ *    and compositing multi-part sprites (like upperBody + legs).
  * 2. Single Responsibility Principle: Solely responsible for loading image resources.
  */
 public class SpriteLoader {
@@ -67,6 +69,19 @@ public class SpriteLoader {
         return transparent;
     }
 
+    private BufferedImage combineSprites(BufferedImage top, BufferedImage bottom, int topY, int bottomY) {
+        int offsetY = bottomY - topY;
+        int width = Math.max(top.getWidth(), bottom.getWidth());
+        int height = Math.max(top.getHeight(), offsetY + bottom.getHeight());
+        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = combined.createGraphics();
+        // center horizontally
+        g2.drawImage(top, (width - top.getWidth()) / 2, 0, null);
+        g2.drawImage(bottom, (width - bottom.getWidth()) / 2, offsetY, null);
+        g2.dispose();
+        return combined;
+    }
+
     public BufferedImage[] getAxelIdleFrames() {
         return new BufferedImage[] {
                 extractSprite(characterSheet, 8, 489, 40, 63),
@@ -77,10 +92,26 @@ public class SpriteLoader {
 
     public BufferedImage[] getAxelWalkFrames() {
         return new BufferedImage[] {
-                extractSprite(characterSheet, 8, 801, 39, 63),
-                extractSprite(characterSheet, 56, 801, 40, 63),
-                extractSprite(characterSheet, 104, 802, 40, 62),
-                extractSprite(characterSheet, 56, 801, 40, 63),
+                combineSprites(
+                    extractSprite(characterSheet, 174, 488, 18, 36),
+                    extractSprite(characterSheet, 304, 512, 20, 40),
+                    488, 512
+                ),
+                combineSprites(
+                    extractSprite(characterSheet, 200, 489, 31, 35),
+                    extractSprite(characterSheet, 336, 512, 38, 40),
+                    489, 512
+                ),
+                combineSprites(
+                    extractSprite(characterSheet, 240, 488, 16, 36),
+                    extractSprite(characterSheet, 384, 512, 20, 40),
+                    488, 512
+                ),
+                combineSprites(
+                    extractSprite(characterSheet, 264, 488, 25, 32),
+                    extractSprite(characterSheet, 416, 512, 37, 40),
+                    488, 512
+                ),
         };
     }
 
@@ -89,7 +120,6 @@ public class SpriteLoader {
                 extractSprite(characterSheet, 8, 650, 32, 54),
                 extractSprite(characterSheet, 49, 638, 36, 66),
                 extractSprite(characterSheet, 96, 640, 47, 64),
-                extractSprite(characterSheet, 72, 736, 48, 56),
         };
     }
 
@@ -112,8 +142,6 @@ public class SpriteLoader {
 
     public BufferedImage[] getAxelAttack2Frames() {
         return new BufferedImage[] {
-                extractSprite(characterSheet, 49, 638, 36, 66),
-                extractSprite(characterSheet, 96, 640, 47, 64),
                 extractSprite(characterSheet, 156, 641, 43, 63),
                 extractSprite(characterSheet, 248, 640, 51, 64),
         };
@@ -129,10 +157,26 @@ public class SpriteLoader {
 
     public BufferedImage[] getBlazeWalkFrames() {
         return new BufferedImage[] {
-                extractSprite(characterSheet, 12, 1261, 49, 59),
-                extractSprite(characterSheet, 72, 1258, 40, 62),
-                extractSprite(characterSheet, 120, 1261, 40, 59),
-                extractSprite(characterSheet, 168, 1265, 58, 55),
+                combineSprites(
+                    extractSprite(characterSheet, 186, 956, 22, 36),
+                    extractSprite(characterSheet, 315, 984, 18, 32),
+                    956, 984
+                ),
+                combineSprites(
+                    extractSprite(characterSheet, 216, 957, 24, 35),
+                    extractSprite(characterSheet, 345, 984, 39, 32),
+                    957, 984
+                ),
+                combineSprites(
+                    extractSprite(characterSheet, 251, 956, 21, 36),
+                    extractSprite(characterSheet, 394, 984, 17, 32),
+                    956, 984
+                ),
+                combineSprites(
+                    extractSprite(characterSheet, 280, 957, 24, 35),
+                    extractSprite(characterSheet, 424, 984, 40, 32),
+                    957, 984
+                ),
         };
     }
 
@@ -140,8 +184,8 @@ public class SpriteLoader {
         return new BufferedImage[] {
                 extractSprite(characterSheet, 8, 1117, 40, 51),
                 extractSprite(characterSheet, 56, 1104, 28, 64),
-                extractSprite(characterSheet, 120, 1176, 15, 72),
-                extractSprite(characterSheet, 59, 1187, 51, 61),
+                extractSprite(characterSheet, 97, 1113, 26, 54),
+                extractSprite(characterSheet, 8, 1117, 40, 51),
         };
     }
 
@@ -165,10 +209,10 @@ public class SpriteLoader {
 
     public BufferedImage[] getBlazeAttack2Frames() {
         return new BufferedImage[] {
-                extractSprite(characterSheet, 386, 1024, 50, 62),
-                extractSprite(characterSheet, 448, 1040, 39, 48),
-                extractSprite(characterSheet, 496, 1031, 38, 57),
-                extractSprite(characterSheet, 544, 1029, 55, 59),
+                extractSprite(characterSheet, 141, 1112, 35, 54),
+                extractSprite(characterSheet, 184, 1121, 61, 43),
+                extractSprite(characterSheet, 256, 1109, 36, 59),
+                extractSprite(characterSheet, 306, 1110, 28, 58),
         };
     }
 

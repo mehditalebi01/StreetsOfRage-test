@@ -9,15 +9,16 @@
     "createdFor": "Java SpriteLoader / Streets of Rage sprite sheets",
     "notes": [
       "Axel jump/fall frames were corrected from the previous pass.",
+      "Axel and Blaze walk frames are split into upperBody and legs parts in the source sheet after the first three idle frames.",
       "The selected two playable characters are Axel and Blaze.",
       "The selected four enemy groups are the first four major usable groups from the enemy/boss sheet."
     ]
   },
   "sources": {
-    "playableCharacters": "Sega Genesis - Streets of Rage - Playable Characters - Adam, Axel and Blaze.png",
-    "enemiesAndBosses": "Sega Genesis - Streets of Rage - Enemies & Bosses - Bosses.png",
-    "round1Stage": "Sega Genesis - Streets of Rage - Stages - Round 1.png",
-    "round2Stage": "Sega Genesis - Streets of Rage - Stages - Round 2.png"
+    "playableCharacters": "res/art/Streets of Rage - Playable Characters - Adam, Axel and Blaze.png",
+    "enemiesAndBosses": "res/art/Streets of Rage - Enemies & Bosses - Bosses.png",
+    "round1Stage": "res/art/Streets of Rage - Stages - Round 1.png",
+    "round2Stage": "res/art/Streets of Rage - Stages - Round 2.png"
   },
   "characters": {
     "axel": {
@@ -48,32 +49,72 @@
         ],
         "walk": [
           {
-            "x": 8,
-            "y": 801,
-            "width": 39,
-            "height": 63,
-            "name": "walk_1"
+            "name": "walk_1",
+            "parts": {
+              "upperBody": {
+                "x": 174,
+                "y": 488,
+                "width": 18,
+                "height": 36
+              },
+              "legs": {
+                "x": 304,
+                "y": 512,
+                "width": 20,
+                "height": 40
+              }
+            }
           },
           {
-            "x": 56,
-            "y": 801,
-            "width": 40,
-            "height": 63,
-            "name": "walk_2"
+            "name": "walk_2",
+            "parts": {
+              "upperBody": {
+                "x": 200,
+                "y": 489,
+                "width": 31,
+                "height": 35
+              },
+              "legs": {
+                "x": 336,
+                "y": 512,
+                "width": 38,
+                "height": 40
+              }
+            }
           },
           {
-            "x": 104,
-            "y": 802,
-            "width": 40,
-            "height": 62,
-            "name": "walk_3"
+            "name": "walk_3",
+            "parts": {
+              "upperBody": {
+                "x": 240,
+                "y": 488,
+                "width": 16,
+                "height": 36
+              },
+              "legs": {
+                "x": 384,
+                "y": 512,
+                "width": 20,
+                "height": 40
+              }
+            }
           },
           {
-            "x": 56,
-            "y": 801,
-            "width": 40,
-            "height": 63,
-            "name": "walk_4"
+            "name": "walk_4",
+            "parts": {
+              "upperBody": {
+                "x": 264,
+                "y": 488,
+                "width": 25,
+                "height": 32
+              },
+              "legs": {
+                "x": 416,
+                "y": 512,
+                "width": 37,
+                "height": 40
+              }
+            }
           }
         ],
         "jump": [
@@ -97,13 +138,6 @@
             "width": 47,
             "height": 64,
             "name": "airborne_kick"
-          },
-          {
-            "x": 72,
-            "y": 736,
-            "width": 48,
-            "height": 56,
-            "name": "airborne_fall"
           }
         ],
         "fall": [
@@ -161,32 +195,18 @@
         ],
         "attack2": [
           {
-            "x": 49,
-            "y": 638,
-            "width": 36,
-            "height": 66,
-            "name": "special_1"
-          },
-          {
-            "x": 96,
-            "y": 640,
-            "width": 47,
-            "height": 64,
-            "name": "special_2"
-          },
-          {
             "x": 156,
             "y": 641,
             "width": 43,
             "height": 63,
-            "name": "special_3"
+            "name": "special_1"
           },
           {
             "x": 248,
             "y": 640,
             "width": 51,
             "height": 64,
-            "name": "special_4"
+            "name": "special_2"
           }
         ]
       }
@@ -219,32 +239,72 @@
         ],
         "walk": [
           {
-            "x": 12,
-            "y": 1261,
-            "width": 49,
-            "height": 59,
-            "name": "walk_1"
+            "name": "walk_1",
+            "parts": {
+              "upperBody": {
+                "x": 186,
+                "y": 956,
+                "width": 22,
+                "height": 36
+              },
+              "legs": {
+                "x": 315,
+                "y": 984,
+                "width": 18,
+                "height": 32
+              }
+            }
           },
           {
-            "x": 72,
-            "y": 1258,
-            "width": 40,
-            "height": 62,
-            "name": "walk_2"
+            "name": "walk_2",
+            "parts": {
+              "upperBody": {
+                "x": 216,
+                "y": 957,
+                "width": 24,
+                "height": 35
+              },
+              "legs": {
+                "x": 345,
+                "y": 984,
+                "width": 39,
+                "height": 32
+              }
+            }
           },
           {
-            "x": 120,
-            "y": 1261,
-            "width": 40,
-            "height": 59,
-            "name": "walk_3"
+            "name": "walk_3",
+            "parts": {
+              "upperBody": {
+                "x": 251,
+                "y": 956,
+                "width": 21,
+                "height": 36
+              },
+              "legs": {
+                "x": 394,
+                "y": 984,
+                "width": 17,
+                "height": 32
+              }
+            }
           },
           {
-            "x": 168,
-            "y": 1265,
-            "width": 58,
-            "height": 55,
-            "name": "walk_4"
+            "name": "walk_4",
+            "parts": {
+              "upperBody": {
+                "x": 280,
+                "y": 957,
+                "width": 24,
+                "height": 35
+              },
+              "legs": {
+                "x": 424,
+                "y": 984,
+                "width": 40,
+                "height": 32
+              }
+            }
           }
         ],
         "jump": [
@@ -263,18 +323,18 @@
             "name": "airborne_1"
           },
           {
-            "x": 120,
-            "y": 1176,
-            "width": 15,
-            "height": 72,
-            "name": "airborne_flip"
+            "x": 97,
+            "y": 1113,
+            "width": 26,
+            "height": 54,
+            "name": "airborne_2"
           },
           {
-            "x": 59,
-            "y": 1187,
-            "width": 51,
-            "height": 61,
-            "name": "landing"
+            "x": 8,
+            "y": 1117,
+            "width": 40,
+            "height": 51,
+            "name": "takeoff_repeat"
           }
         ],
         "fall": [
@@ -339,32 +399,32 @@
         ],
         "attack2": [
           {
-            "x": 386,
-            "y": 1024,
-            "width": 50,
-            "height": 62,
-            "name": "kick_1"
+            "x": 141,
+            "y": 1112,
+            "width": 35,
+            "height": 54,
+            "name": "special_1"
           },
           {
-            "x": 448,
-            "y": 1040,
-            "width": 39,
-            "height": 48,
-            "name": "kick_2"
+            "x": 184,
+            "y": 1121,
+            "width": 61,
+            "height": 43,
+            "name": "special_2"
           },
           {
-            "x": 496,
-            "y": 1031,
-            "width": 38,
-            "height": 57,
-            "name": "kick_3"
-          },
-          {
-            "x": 544,
-            "y": 1029,
-            "width": 55,
+            "x": 256,
+            "y": 1109,
+            "width": 36,
             "height": 59,
-            "name": "kick_4"
+            "name": "special_3"
+          },
+          {
+            "x": 306,
+            "y": 1110,
+            "width": 28,
+            "height": 58,
+            "name": "special_4"
           }
         ]
       }

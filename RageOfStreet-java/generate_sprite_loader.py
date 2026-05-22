@@ -1,23 +1,24 @@
 import json
 import os
 
-with open('res/art/streets-of-rage-coordinates.json', 'r') as f:
+with open('res/art/streets-of-rage-coordinates copy.json', 'r') as f:
     data = json.load(f)
 
-def gen_method(name, frames):
+def gen_method(name, frames, is_enemy=False):
+    sheet = "enemySheet" if is_enemy else "characterSheet"
     java_code = f"    public BufferedImage[] get{name}() {{\n"
     java_code += "        return new BufferedImage[] {\n"
     for frame in frames:
-        java_code += f"                extractSprite(characterSheet, {frame['x']}, {frame['y']}, {frame['width']}, {frame['height']}),\n"
-    java_code += "        };\n"
-    java_code += "    }\n"
-    return java_code
-
-def gen_method_enemy(name, frames):
-    java_code = f"    public BufferedImage[] get{name}() {{\n"
-    java_code += "        return new BufferedImage[] {\n"
-    for frame in frames:
-        java_code += f"                extractSprite(enemySheet, {frame['x']}, {frame['y']}, {frame['width']}, {frame['height']}),\n"
+        if "parts" in frame:
+            upper = frame["parts"]["upperBody"]
+            legs = frame["parts"]["legs"]
+            java_code += f"                combineSprites(\n"
+            java_code += f"                    extractSprite({sheet}, {upper['x']}, {upper['y']}, {upper['width']}, {upper['height']}),\n"
+            java_code += f"                    extractSprite({sheet}, {legs['x']}, {legs['y']}, {legs['width']}, {legs['height']}),\n"
+            java_code += f"                    {upper['y']}, {legs['y']}\n"
+            java_code += f"                ),\n"
+        else:
+            java_code += f"                extractSprite({sheet}, {frame['x']}, {frame['y']}, {frame['width']}, {frame['height']}),\n"
     java_code += "        };\n"
     java_code += "    }\n"
     return java_code
@@ -25,10 +26,19 @@ def gen_method_enemy(name, frames):
 out = """package streetsofrage.graphics;
 
 import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Loads and extracts sprite frames from sprite sheets.
+ * 
+ * OOP Concepts Used:
+ * 1. Encapsulation: Hides the complex logic of cutting sub-images, making backgrounds transparent,
+ *    and compositing multi-part sprites (like upperBody + legs).
+ * 2. Single Responsibility Principle: Solely responsible for loading image resources.
+ */
 public class SpriteLoader {
 
     private static final int BG_R = 186;
@@ -84,6 +94,19 @@ public class SpriteLoader {
         return transparent;
     }
 
+    private BufferedImage combineSprites(BufferedImage top, BufferedImage bottom, int topY, int bottomY) {
+        int offsetY = bottomY - topY;
+        int width = Math.max(top.getWidth(), bottom.getWidth());
+        int height = Math.max(top.getHeight(), offsetY + bottom.getHeight());
+        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = combined.createGraphics();
+        // center horizontally
+        g2.drawImage(top, (width - top.getWidth()) / 2, 0, null);
+        g2.drawImage(bottom, (width - bottom.getWidth()) / 2, offsetY, null);
+        g2.dispose();
+        return combined;
+    }
+
 """
 
 # Characters
@@ -92,7 +115,7 @@ for char_id, char_data in data['characters'].items():
     for anim_id, frames in char_data['animations'].items():
         anim_name = anim_id.capitalize()
         method_name = f"{char_name}{anim_name}Frames"
-        out += gen_method(method_name, frames) + "\n"
+        out += gen_method(method_name, frames, is_enemy=False) + "\n"
 
 # Enemies
 for enemy_id, enemy_data in data['enemies'].items():
@@ -101,7 +124,7 @@ for enemy_id, enemy_data in data['enemies'].items():
     for anim_id, frames in enemy_data['animations'].items():
         anim_name = anim_id.capitalize()
         method_name = f"{enemy_name}{anim_name}Frames"
-        out += gen_method_enemy(method_name, frames) + "\n"
+        out += gen_method(method_name, frames, is_enemy=True) + "\n"
 
 out += "}\n"
 

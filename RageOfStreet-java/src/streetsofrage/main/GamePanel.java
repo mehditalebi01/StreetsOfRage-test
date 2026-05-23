@@ -17,12 +17,15 @@ import java.util.List;
  * The core game panel and game loop.
  * 
  * OOP Concepts Used:
- * 1. Composition: GamePanel is composed of many objects (Player, Level, HUD, List<Enemy>),
- *    managing their lifecycles and interactions rather than inheriting from them.
- * 2. Encapsulation: State variables like camera position and game state are managed internally,
- *    and the game loop is hidden from the main entry point (Game.java).
+ * 1. Composition: GamePanel is composed of many objects (Player, Level, HUD,
+ * List<Enemy>),
+ * managing their lifecycles and interactions rather than inheriting from them.
+ * 2. Encapsulation: State variables like camera position and game state are
+ * managed internally,
+ * and the game loop is hidden from the main entry point (Game.java).
  *
- * Implements Runnable for the game thread. Runs at 60 FPS using a delta-time loop.
+ * Implements Runnable for the game thread. Runs at 60 FPS using a delta-time
+ * loop.
  */
 public class GamePanel extends JPanel implements Runnable {
 
@@ -36,6 +39,7 @@ public class GamePanel extends JPanel implements Runnable {
         PLAYING,
         PAUSED
     }
+
     private GameState gameState = GameState.TITLE_SCREEN;
 
     // ======================== FPS ========================
@@ -46,7 +50,8 @@ public class GamePanel extends JPanel implements Runnable {
     private final AudioManager audioManager = new AudioManager();
     private Thread gameThread;
 
-    // ======================== Camera (replaces CameraFollow.cs) ========================
+    // ======================== Camera (replaces CameraFollow.cs)
+    // ========================
     public double cameraX = 0;
     public double cameraY = 0;
     private final double cameraSmoothFactor = 0.08;
@@ -71,27 +76,23 @@ public class GamePanel extends JPanel implements Runnable {
     public void setupGame() {
         // Load shared sprite loader for characters
         SpriteLoader spriteLoader = new SpriteLoader(
-            "res/art/Streets of Rage - Playable Characters - Adam, Axel and Blaze.png"
-        );
-        spriteLoader.loadEnemySheet(
-            "res/art/Streets of Rage - Enemies & Bosses - Bosses.png"
-        );
+                "res/art/Sega Genesis - Streets of Rage 2 - Playable Characters - Axel.png",
+                "res/art/Sega Genesis - Streets of Rage 2 - Playable Characters - Blaze.png",
+                "res/art/Streets of Rage - Enemies & Bosses - Bosses.png");
 
         // Create level (using the new Round 1 background)
         level = new Level(this,
-            "res/art/Streets of Rage - Stages - Round 1.png",
-            "res/sound/level_1.wav"
-        );
+                "res/art/Streets of Rage - Stages - Round 1.png",
+                "res/sound/level_1.wav");
 
         // Create player (pass shared SpriteLoader)
-        player = new Player(this, keyH, audioManager, spriteLoader, Player.PlayerType.BLAZE);
+        player = new Player(this, keyH, audioManager, spriteLoader, Player.PlayerType.AXEL);
         // Note: You can change the above to Player.PlayerType.BLAZE to play as Blaze!
         player.setLevelBounds(
-            level.getLeftBound(),
-            level.getRightBound(),
-            level.getTopBound(),
-            level.getBottomBound()
-        );
+                level.getLeftBound(),
+                level.getRightBound(),
+                level.getTopBound(),
+                level.getBottomBound());
 
         // Create enemies (pass shared SpriteLoader)
         enemies = new ArrayList<>();
@@ -190,9 +191,11 @@ public class GamePanel extends JPanel implements Runnable {
                 // Check enemy attacks vs player
                 for (Enemy enemy : enemies) {
                     if (enemy.isAlive() && enemy.getHitBox().isActive()) {
-                        // For simplicity, enemies deal damage to player and we use a small invincible frame logic in player 
+                        // For simplicity, enemies deal damage to player and we use a small invincible
+                        // frame logic in player
                         // if needed, but for now we just deal damage once per attack.
-                        if (!player.wasHitThisAttack(enemy) && enemy.getHitBox().checkCollision(player.getWorldBounds())) {
+                        if (!player.wasHitThisAttack(enemy)
+                                && enemy.getHitBox().checkCollision(player.getWorldBounds())) {
                             int dmg = enemy.getHitBox().getCurrentAttack().getDamage();
                             player.takeDamage(dmg);
                             player.markHitByAttack(enemy);
@@ -230,7 +233,8 @@ public class GamePanel extends JPanel implements Runnable {
         cameraY += (targetCameraY - cameraY) * cameraSmoothFactor;
 
         // Clamp camera to level bounds
-        if (cameraX < 0) cameraX = 0;
+        if (cameraX < 0)
+            cameraX = 0;
         if (cameraX > level.getLevelWidth() - screenWidth) {
             cameraX = level.getLevelWidth() - screenWidth;
         }

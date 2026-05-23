@@ -1,24 +1,22 @@
 import json
 import os
 
-with open('res/art/streets-of-rage-coordinates copy.json', 'r') as f:
-    data = json.load(f)
+with open('res/art/sprite_coordinates.json', 'r') as f:
+    chars_data = json.load(f)
 
-def gen_method(name, frames, is_enemy=False):
-    sheet = "enemySheet" if is_enemy else "characterSheet"
+with open('res/art/streets-of-rage-coordinates copy.json', 'r') as f:
+    enemies_data = json.load(f)
+
+def gen_method(name, frames, sheet_name):
     java_code = f"    public BufferedImage[] get{name}() {{\n"
     java_code += "        return new BufferedImage[] {\n"
     for frame in frames:
-        if "parts" in frame:
-            upper = frame["parts"]["upperBody"]
-            legs = frame["parts"]["legs"]
-            java_code += f"                combineSprites(\n"
-            java_code += f"                    extractSprite({sheet}, {upper['x']}, {upper['y']}, {upper['width']}, {upper['height']}),\n"
-            java_code += f"                    extractSprite({sheet}, {legs['x']}, {legs['y']}, {legs['width']}, {legs['height']}),\n"
-            java_code += f"                    {upper['y']}, {legs['y']}\n"
-            java_code += f"                ),\n"
-        else:
-            java_code += f"                extractSprite({sheet}, {frame['x']}, {frame['y']}, {frame['width']}, {frame['height']}),\n"
+        # Some frames might be using 'w'/'h' or 'width'/'height'
+        w = frame.get('w', frame.get('width', 0))
+        h = frame.get('h', frame.get('height', 0))
+        x = frame.get('x', 0)
+        y = frame.get('y', 0)
+        java_code += f"                extractSprite({sheet_name}, {x}, {y}, {w}, {h}),\n"
     java_code += "        };\n"
     java_code += "    }\n"
     return java_code
@@ -35,8 +33,7 @@ import java.io.IOException;
  * Loads and extracts sprite frames from sprite sheets.
  * 
  * OOP Concepts Used:
- * 1. Encapsulation: Hides the complex logic of cutting sub-images, making backgrounds transparent,
- *    and compositing multi-part sprites (like upperBody + legs).
+ * 1. Encapsulation: Hides the complex logic of cutting sub-images, making backgrounds transparent.
  * 2. Single Responsibility Principle: Solely responsible for loading image resources.
  */
 public class SpriteLoader {
@@ -45,23 +42,17 @@ public class SpriteLoader {
     private static final int BG_G = 254;
     private static final int BG_B = 202;
 
-    private BufferedImage characterSheet;
+    private BufferedImage axelSheet;
+    private BufferedImage blazeSheet;
     private BufferedImage enemySheet;
 
-    public SpriteLoader(String characterSheetPath) {
+    public SpriteLoader(String axelPath, String blazePath, String enemyPath) {
         try {
-            characterSheet = ImageIO.read(new File(characterSheetPath));
+            axelSheet = ImageIO.read(new File(axelPath));
+            blazeSheet = ImageIO.read(new File(blazePath));
+            enemySheet = ImageIO.read(new File(enemyPath));
         } catch (IOException e) {
-            System.err.println("ERROR: Could not load character sheet: " + characterSheetPath);
-            e.printStackTrace();
-        }
-    }
-
-    public void loadEnemySheet(String enemySheetPath) {
-        try {
-            enemySheet = ImageIO.read(new File(enemySheetPath));
-        } catch (IOException e) {
-            System.err.println("ERROR: Could not load enemy sheet: " + enemySheetPath);
+            System.err.println("ERROR: Could not load sprite sheets.");
             e.printStackTrace();
         }
     }
@@ -84,6 +75,7 @@ public class SpriteLoader {
                 int r = (rgb >> 16) & 0xFF;
                 int g = (rgb >> 8) & 0xFF;
                 int b = rgb & 0xFF;
+                // Treat slightly-off greens as background
                 if (Math.abs(r - BG_R) < 12 && Math.abs(g - BG_G) < 12 && Math.abs(b - BG_B) < 12) {
                     transparent.setRGB(px, py, 0x00000000);
                 } else {
@@ -94,37 +86,25 @@ public class SpriteLoader {
         return transparent;
     }
 
-    private BufferedImage combineSprites(BufferedImage top, BufferedImage bottom, int topY, int bottomY) {
-        int offsetY = bottomY - topY;
-        int width = Math.max(top.getWidth(), bottom.getWidth());
-        int height = Math.max(top.getHeight(), offsetY + bottom.getHeight());
-        BufferedImage combined = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2 = combined.createGraphics();
-        // center horizontally
-        g2.drawImage(top, (width - top.getWidth()) / 2, 0, null);
-        g2.drawImage(bottom, (width - bottom.getWidth()) / 2, offsetY, null);
-        g2.dispose();
-        return combined;
-    }
-
 """
 
-# Characters
-for char_id, char_data in data['characters'].items():
+# Characters from the new JSON file
+for char_id, char_data in chars_data['characters'].items():
     char_name = char_id.capitalize()
+    sheet_name = f"{char_id}Sheet"
     for anim_id, frames in char_data['animations'].items():
         anim_name = anim_id.capitalize()
         method_name = f"{char_name}{anim_name}Frames"
-        out += gen_method(method_name, frames, is_enemy=False) + "\n"
+        out += gen_method(method_name, frames, sheet_name) + "\n"
 
-# Enemies
-for enemy_id, enemy_data in data['enemies'].items():
+# Enemies from the old JSON file
+for enemy_id, enemy_data in enemies_data['enemies'].items():
     # Convert boss_blue -> BossBlue
     enemy_name = "".join([word.capitalize() for word in enemy_id.split('_')])
     for anim_id, frames in enemy_data['animations'].items():
         anim_name = anim_id.capitalize()
         method_name = f"{enemy_name}{anim_name}Frames"
-        out += gen_method(method_name, frames, is_enemy=True) + "\n"
+        out += gen_method(method_name, frames, "enemySheet") + "\n"
 
 out += "}\n"
 

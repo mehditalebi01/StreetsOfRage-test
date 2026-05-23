@@ -85,15 +85,15 @@ public class Player extends Entity implements Attacker {
             idleAnim    = new Animation(spriteLoader.getAxelIdleFrames(),   167, true);   // 6 fps
             walkAnim    = new Animation(spriteLoader.getAxelWalkFrames(),   167, true);   // 6 fps
             jumpAnim    = new Animation(spriteLoader.getAxelJumpFrames(),   167, false);  // 6 fps
-            fallAnim    = new Animation(spriteLoader.getAxelFallFrames(),    83, true);   // 12 fps
-            attack1Anim = new Animation(spriteLoader.getAxelAttack1Frames(), 100, false); // 10 fps
+            fallAnim    = new Animation(spriteLoader.getAxelJumpFrames(),    83, true);   // Fallback to jump
+            attack1Anim = new Animation(spriteLoader.getAxelAttackFrames(), 100, false); // 10 fps
             attack2Anim = new Animation(spriteLoader.getAxelAttack2Frames(), 100, false); // 10 fps
         } else {
             idleAnim    = new Animation(spriteLoader.getBlazeIdleFrames(),   167, true);
             walkAnim    = new Animation(spriteLoader.getBlazeWalkFrames(),   167, true);
             jumpAnim    = new Animation(spriteLoader.getBlazeJumpFrames(),   167, false);
-            fallAnim    = new Animation(spriteLoader.getBlazeFallFrames(),    83, true);
-            attack1Anim = new Animation(spriteLoader.getBlazeAttack1Frames(), 100, false);
+            fallAnim    = new Animation(spriteLoader.getBlazeJumpFrames(),    83, true);  // Fallback to jump
+            attack1Anim = new Animation(spriteLoader.getBlazeAttackFrames(), 100, false);
             attack2Anim = new Animation(spriteLoader.getBlazeAttack2Frames(), 100, false);
         }
 
